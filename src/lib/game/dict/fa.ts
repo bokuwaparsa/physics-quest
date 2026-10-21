@@ -88,7 +88,7 @@ export const fa: Record<string, string> = {
   'nav.worldMap': 'نقشه دنیاها',
   'steps.aria': 'گام‌های درس',
   'step.sr': 'گام {n}',
-  'lesson.min': '~{n} دقیقه',
+  'lesson.min': 'حدود {n} دقیقه',
   'lesson.mastered': 'مسلط شدی',
   'lesson.objectives': 'چه چیزهایی یاد می‌گیری',
   'lesson.trySim': 'شبیه‌سازی را امتحان کن',

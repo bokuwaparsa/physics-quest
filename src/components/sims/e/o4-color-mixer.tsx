@@ -7,6 +7,7 @@ import {
   useSimCanvas, useSimBeep, useReducedMotion,
 } from '@/components/sims/sim-kit'
 import { Flag, RotateCcw } from 'lucide-react'
+import { useI18n } from '@/lib/game/i18n'
 
 type FilterName = 'none' | 'red' | 'green' | 'blue' | 'cyan' | 'magenta' | 'yellow'
 
@@ -30,6 +31,12 @@ const PRESETS: { label: string; rgb: [number, number, number] }[] = [
 
 const CHANNEL_COLORS = ['#ef4444', '#22c55e', '#3b82f6'] // R, G, B
 const toHex = (n: number) => n.toString(16).padStart(2, '0').toUpperCase()
+
+/** Translated 'Presets:' caption (raw span, so it needs its own simT hook). */
+function PresetLabel() {
+  const { simT } = useI18n()
+  return <span className="text-xs text-muted-foreground">{simT('Presets:')}</span>
+}
 
 export function ColorMixerSim() {
   const [mode, setMode] = useState<'lights' | 'filter'>('lights')
@@ -245,7 +252,7 @@ export function ColorMixerSim() {
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs text-muted-foreground">Presets:</span>
+        <PresetLabel />
         {PRESETS.map((p) => (
           <SimButton
             key={p.label}
@@ -263,11 +270,11 @@ export function ColorMixerSim() {
           variant={challenge === 'active' ? 'destructive' : 'outline'}
           onClick={startChallenge}
         >
-          <Flag className="h-4 w-4 mr-1" aria-hidden />
+          <Flag className="h-4 w-4 me-1" aria-hidden />
           Challenge: make white light
         </SimButton>
         <SimButton variant="secondary" onClick={reset}>
-          <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+          <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
         </SimButton>
       </div>
 

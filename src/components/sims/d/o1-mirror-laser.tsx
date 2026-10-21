@@ -270,16 +270,16 @@ export function MirrorLaserSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider label="Mirror tilt" value={deg} min={0} max={90} step={0.5} unit="°" onChange={setDeg} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={challenge === 'won' ? replay : startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden />
+            <Flag className="h-4 w-4 me-1" aria-hidden />
             {challenge === 'won' ? 'New glowing target' : 'Challenge: hit the target'}
           </SimButton>
           <SimButton variant="secondary" onClick={() => { setDeg(10); setResult('') }}>
-            <RefreshCcw className="h-4 w-4 mr-1" aria-hidden /> Reset angle
+            <RefreshCcw className="h-4 w-4 me-1" aria-hidden /> Reset angle
           </SimButton>
         </div>
       </div>

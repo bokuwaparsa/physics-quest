@@ -216,16 +216,16 @@ export function RefractionTankSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
             disabled={challenge === 'won'}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: find θc (water→air)
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: find θc (water→air)
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RefreshCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RefreshCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
         </div>
       </div>

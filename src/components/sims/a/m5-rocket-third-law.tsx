@@ -325,19 +325,19 @@ export function RocketThirdLawSim() {
             label="Engine thrust" value={thrust} min={0} max={6000} step={10} unit="N"
             onChange={setThrust}
           />
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <SimButton onClick={() => setEngine((e) => !e)} variant={engine ? 'destructive' : 'default'}>
-              <Rocket className="h-4 w-4 mr-1" aria-hidden />
+              <Rocket className="h-4 w-4 me-1" aria-hidden />
               {engine ? 'Cut engine' : 'Launch'}
             </SimButton>
             <SimButton variant="secondary" onClick={() => { reset(); setEngine(false); setChallenge('idle') }}>
-              <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+              <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
             </SimButton>
             <SimButton
               variant={challenge === 'active' ? 'destructive' : 'outline'}
               onClick={() => { reset(); setEngine(true); setChallenge('active') }}
             >
-              <Flag className="h-4 w-4 mr-1" aria-hidden />
+              <Flag className="h-4 w-4 me-1" aria-hidden />
               Challenge: hover 3 s
             </SimButton>
           </div>
@@ -345,10 +345,10 @@ export function RocketThirdLawSim() {
       ) : (
         <div className="flex flex-wrap items-end gap-3">
           <SimButton onClick={() => { st.current.skMoving = true }}>
-            <Users className="h-4 w-4 mr-1" aria-hidden /> Push off!
+            <Users className="h-4 w-4 me-1" aria-hidden /> Push off!
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
         </div>
       )}

@@ -357,3 +357,30 @@ Stage Summary:
 - `bunx tsc --noEmit` clean for src/; `bun run lint` 0 errors; overlay coverage check: ALL 30 lessons × 2 locales fully covered; dev.log 200s.
 - Browser-verified end-to-end (agent-browser): EN→FA switch mirrors layout (html dir=rtl), full Persian quiz run (5/5, mastery celebration, +70 XP, streak), TR switch (ranks/UI re-render), persistence across reload, mobile 390×844 RTL, Persian reset dialog (wipes progress, keeps locale), zero console/page errors.
 - Intentional fallbacks documented in README: canvas-art text and canvas aria-labels remain English.
+---
+Task ID: 11
+Agent: orchestrator (main)
+Task: Fix Persian (RTL) correctness, sidebar title UI, and mobile responsiveness bugs reported by the user.
+
+Work Log:
+- RTL root causes fixed:
+  - app/layout.tsx: added a pre-hydration inline script that sets <html lang/dir> from localStorage('pq.locale')/browser language BEFORE first paint — kills the LTR→RTL flash and layout jump on every load for Persian users.
+  - shell.tsx header: physical `ml-auto` → logical `ms-auto` (in RTL, ml-auto absorbs free space on the wrong side, so the stats cluster stuck to the brand instead of pushing to the far edge — exactly the bunched header in the user's screenshot).
+  - content-blocks.tsx: key-idea callout `border-l-4` → `border-s-4` (accent now on the start/right side in RTL); table headers `text-left` → `text-start`.
+  - home.tsx: decorative orbit insets `-right-*` → `-end-*` (mirrors in RTL); home filter selects now `min-w-0 flex-1` on mobile (fixed widths used to overflow 320–390 px screens).
+  - fa dict: 'lesson.min' '~{n} دقیقه' → 'حدود {n} دقیقه' (leading tilde is a bidi-hostile neutral that rendered as «۱۲~»).
+  - lesson-view.tsx: XP chip wrapped in dir="ltr" span; footer made flex-wrap.
+  - sims: bulk-replaced icon margins `mr-1` → `me-1` across all 30 sim files (icons sat on the wrong side of their labels in RTL buttons).
+- Sidebar title UI root cause found & fixed:
+  - Radix ScrollArea's viewport uses display:table, so rows sized to max-content and title truncation never engaged (long titles clipped hard at the rail edge — the user's "(F = ma)" floating-line artifact). Replaced ScrollArea with a plain `overflow-y-auto pq-scroll` container; rows now ellipsize correctly in every locale.
+  - Titles (sidebar/home/h1) wrapped in <bdi> + min-w-0/flex-1/overflow-hidden so mixed Persian+Latin titles stay atomic and single-line.
+- Bidi hardening: new `isolateLatin()` in tex.tsx wraps Latin/unit islands ("10 N", "m/s²", "(kg)") in Unicode LRI…PDI isolates inside RTL text — fixes digits tearing away from units in table headers («…هُل 10 N») and similar strings. Applied inside RichText plain segments + all raw title render sites. Strings without RTL script pass through untouched (EN/TR safe).
+- Mobile responsiveness:
+  - lesson step rail `grid-cols-4` → `grid-cols-2 sm:grid-cols-4` (Persian labels no longer crush at 390 px).
+  - All 30 sim button groups `flex gap-2` → `flex flex-wrap gap-2` (challenge button no longer clips off-screen).
+  - Practice/quiz layouts verified at 390×844; sidebar sheet opens from the right in RTL with correct icon/badge sides.
+- Translation gaps found during browser QA, added to terms-fa/terms-tr: 'Challenge: 20 m/s in 4 s', 'Challenge: 20 m in 4.0 s', 'Speed v = f·λ', 'Siren speed vₛ', color presets Yellow/Cyan/Magenta/White, 'Presets:', o3 image-type values ('at infinity', 'real · inverted', 'virtual · upright'); wired the raw o4 'Presets:' span and o3 Readout value through simT.
+- Verified end-to-end with agent-browser: FA desktop 1440 (header mirrored, callout/table/sidebar all correct), FA mobile 390×844 (home, lesson, sim, practice answer flow, sidebar sheet), TR dark LTR regression, EN regression, practice Q answered in FA with KaTeX feedback, console clean after reload (only pre-existing Radix DialogContent aria warning), dev.log 200s, `bun run lint` 0 errors, `bunx tsc --noEmit` clean for src/.
+
+Stage Summary:
+- Persian UI is now truly RTL end-to-end: correct first-paint direction, mirrored header/footer, start-side accents, atomic Latin islands, working title truncation in the lesson index, and phone-safe layouts. No content or lesson files touched; scope limited to chrome/layout/i18n plumbing + glossary additions.

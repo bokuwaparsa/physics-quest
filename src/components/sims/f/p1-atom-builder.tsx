@@ -194,7 +194,7 @@ export function AtomBuilderSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimButton variant="outline" onClick={startChallenge}>
-          <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: build neutral helium
+          <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: build neutral helium
         </SimButton>
         <SimButton
           variant="secondary"
@@ -203,7 +203,7 @@ export function AtomBuilderSim() {
           Try carbon-12
         </SimButton>
         <SimButton variant="ghost" onClick={() => { setP(1); setN(0); setE(1); setChallenge('idle'); setResult('') }}>
-          <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+          <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
         </SimButton>
       </div>
 

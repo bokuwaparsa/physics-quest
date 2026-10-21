@@ -216,17 +216,17 @@ export function HalfLifeSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimButton onClick={() => setRunning((r) => !r)}>
-          {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+          {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
           {running ? 'Pause' : 'Start'}
         </SimButton>
         <SimButton variant="secondary" onClick={stepOnce}>
-          <StepForward className="h-4 w-4 mr-1" aria-hidden /> Step 1 half-life
+          <StepForward className="h-4 w-4 me-1" aria-hidden /> Step 1 half-life
         </SimButton>
         <SimButton variant="ghost" onClick={reset}>
-          <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+          <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
         </SimButton>
         <SimButton variant="outline" onClick={() => { if (challenge === 'idle' || challenge === 'won') setChallenge('active'); else checkGuess() }}>
-          <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: predict 3 half-lives
+          <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: predict 3 half-lives
         </SimButton>
       </div>
 

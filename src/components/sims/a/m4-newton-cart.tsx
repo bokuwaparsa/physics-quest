@@ -219,19 +219,19 @@ export function NewtonCartSim() {
           label="Pushing force" value={force} min={0} max={50} step={1} unit="N"
           onChange={setForce}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={() => setRunning((r) => !r)} disabled={finishT !== null}>
-            {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+            {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
             {running ? 'Pause' : 'Go'}
           </SimButton>
           <SimButton variant="secondary" onClick={() => { reset(false); setRunning(false); setChallenge('idle') }}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => { reset(true); setRunning(true) }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden />
+            <Flag className="h-4 w-4 me-1" aria-hidden />
             Challenge: 20 m in 4.0 s
           </SimButton>
         </div>

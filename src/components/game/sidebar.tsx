@@ -4,7 +4,6 @@
 import { useMemo, useState } from 'react'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { UNITS } from '@/lib/game/curriculum'
 import { useLessons, useUnits } from '@/lib/game/l10n'
@@ -12,6 +11,7 @@ import { useGame } from '@/lib/game/progress'
 import { navigate } from '@/lib/game/router'
 import { useI18n } from '@/lib/game/i18n'
 import { UNIT_ICONS } from '@/components/game/home'
+import { isolateLatin } from '@/components/game/tex'
 import { cn } from '@/lib/utils'
 import { Search, Menu, Compass, BarChart3, Scale, Home as HomeIcon } from 'lucide-react'
 import type { UnitId } from '@/lib/game/types'
@@ -65,7 +65,9 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
         </div>
       </div>
 
-      <ScrollArea className="flex-1">
+      {/* plain scroll container: Radix ScrollArea's viewport uses display:table,
+          which lets rows grow to max-content and defeats title truncation */}
+      <div className="pq-scroll min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
         <nav className="p-2" aria-label={t('aria.lessonIndex')}>
           {filtered ? (
             <ul className="space-y-0.5 px-1">
@@ -76,11 +78,11 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                 <li key={l.id}>
                   <button
                     onClick={() => go(l.id)}
-                    className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-start text-sm hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    className="flex w-full min-w-0 items-center gap-2 overflow-hidden rounded-lg px-2 py-1.5 text-start text-sm hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <span className={cn('h-2 w-2 rounded-full shrink-0')} style={{ background: UNITS.find((u) => u.id === l.unitId)?.hex }} aria-hidden />
-                    <span className="truncate">{l.title}</span>
-                    {lessons[l.id]?.completed && <span className="ms-auto text-emerald-500 text-xs" aria-label={t('aria.mastered')}>✓</span>}
+                    <bdi className="min-w-0 flex-1 truncate">{isolateLatin(l.title)}</bdi>
+                    {lessons[l.id]?.completed && <span className="shrink-0 text-emerald-500 text-xs" aria-label={t('aria.mastered')}>✓</span>}
                   </button>
                 </li>
               ))}
@@ -91,10 +93,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               const done = u.lessonIds.filter((id) => lessons[id]?.completed).length
               return (
                 <div key={u.id} className="mb-3">
-                  <p className="flex items-center gap-2 px-2 py-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                    <Icon className="h-3.5 w-3.5" style={{ color: u.hex }} aria-hidden />
-                    <span className="truncate">{u.title}</span>
-                    <Badge variant="secondary" className="ms-auto tabular-nums">{done}/{u.lessonIds.length}</Badge>
+                  <p className="flex min-w-0 items-center gap-2 px-2 py-1.5 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                    <Icon className="h-3.5 w-3.5 shrink-0" style={{ color: u.hex }} aria-hidden />
+                    <bdi className="min-w-0 flex-1 truncate">{isolateLatin(u.title)}</bdi>
+                    <Badge variant="secondary" className="ms-auto shrink-0 tabular-nums">{done}/{u.lessonIds.length}</Badge>
                   </p>
                   <ul className="space-y-0.5 px-1">
                     {u.lessonIds.map((id) => {
@@ -104,10 +106,10 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
                         <li key={id}>
                           <button
                             onClick={() => go(id)}
-                            className="flex w-full items-center gap-2 rounded-lg px-2 ps-4 py-1.5 text-start text-sm hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="flex w-full min-w-0 items-center gap-2 overflow-hidden rounded-lg px-2 ps-4 py-1.5 text-start text-sm hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           >
-                            <span className="truncate">{l.title}</span>
-                            {lessons[id]?.completed && <span className="ms-auto text-emerald-500 text-xs" aria-label={t('aria.mastered')}>✓</span>}
+                            <bdi className="min-w-0 flex-1 truncate">{isolateLatin(l.title)}</bdi>
+                            {lessons[id]?.completed && <span className="shrink-0 text-emerald-500 text-xs" aria-label={t('aria.mastered')}>✓</span>}
                           </button>
                         </li>
                       )
@@ -118,7 +120,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
             })
           )}
         </nav>
-      </ScrollArea>
+      </div>
     </div>
   )
 }

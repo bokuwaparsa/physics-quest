@@ -46,7 +46,7 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
             )
           case 'key':
             return (
-              <div key={i} className="rounded-lg border-l-4 border-amber-500 bg-amber-500/10 px-4 py-3 flex gap-2.5">
+              <div key={i} className="rounded-lg border-s-4 border-amber-500 bg-amber-500/10 px-4 py-3 flex gap-2.5 flex-row">
                 <Lightbulb className="h-4 w-4 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" aria-hidden />
                 <p className="text-sm leading-relaxed font-medium">
                   <RichText text={b.text} />
@@ -60,7 +60,7 @@ export function ContentBlocks({ blocks }: { blocks: ContentBlock[] }) {
                   <thead className="bg-muted/50">
                     <tr>
                       {b.headers.map((h, j) => (
-                        <th key={j} className="px-3 py-2 text-left font-semibold">
+                        <th key={j} className="px-3 py-2 text-start font-semibold">
                           <RichText text={h} />
                         </th>
                       ))}

@@ -7,6 +7,7 @@ import {
   canvasPos, useSimBeep, useReducedMotion, drawGrid,
 } from '@/components/sims/sim-kit'
 import { Flag, RotateCcw } from 'lucide-react'
+import { useI18n } from '@/lib/game/i18n'
 
 const F = 2 // focal length (m)
 const H_OBJ = 0.8 // object height (m)
@@ -19,6 +20,7 @@ export function LensBenchSim() {
   const [result, setResult] = useState('')
   const beep = useSimBeep()
   const reducedMotion = useReducedMotion()
+  const { simT } = useI18n()
 
   // derived physics (thin lens equation) for the DOM readouts
   const invDi = 1 / F - 1 / dObj
@@ -276,16 +278,16 @@ export function LensBenchSim() {
           label="Object distance" value={dObj} min={0.5} max={6} step={0.1} unit="m"
           onChange={setDObj}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden />
+            <Flag className="h-4 w-4 me-1" aria-hidden />
             Challenge: image at 4 m
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
         </div>
       </div>
@@ -294,7 +296,7 @@ export function LensBenchSim() {
         <Readout label="Object dist" value={dObj.toFixed(1)} unit="m" tone="text-orange-500" />
         <Readout label="Image dist" value={finite ? dImg.toFixed(2) : '∞'} unit="m" tone="text-amber-500" />
         <Readout label="Magnification" value={finite ? mag.toFixed(2) : '—'} unit="×" />
-        <Readout label="Image type" value={typeLabel} tone="text-teal-500" />
+        <Readout label="Image type" value={simT(typeLabel)} tone="text-teal-500" />
       </div>
 
       {result && (

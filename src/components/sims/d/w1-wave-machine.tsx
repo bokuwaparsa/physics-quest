@@ -207,19 +207,19 @@ export function WaveMachineSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={sendPulse}>
-            <Send className="h-4 w-4 mr-1" aria-hidden /> Send pulse
+            <Send className="h-4 w-4 me-1" aria-hidden /> Send pulse
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
             disabled={challenge === 'won'}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: v = 8 m/s
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: v = 8 m/s
           </SimButton>
         </div>
       </div>

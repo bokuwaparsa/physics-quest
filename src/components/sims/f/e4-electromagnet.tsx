@@ -176,13 +176,13 @@ export function ElectromagnetSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimButton variant={mode === 'bar' ? 'default' : 'outline'} onClick={() => { setMode('bar'); setResult('') }}>
-          <Magnet className="h-4 w-4 mr-1" aria-hidden /> Bar magnet
+          <Magnet className="h-4 w-4 me-1" aria-hidden /> Bar magnet
         </SimButton>
         <SimButton variant={mode === 'coil' ? 'default' : 'outline'} onClick={() => { setMode('coil'); setResult('') }}>
           Electromagnet
         </SimButton>
         <SimButton variant="secondary" disabled={!isCoil} onClick={() => setFlipped((f) => !f)}>
-          <RefreshCw className="h-4 w-4 mr-1" aria-hidden /> Flip polarity
+          <RefreshCw className="h-4 w-4 me-1" aria-hidden /> Flip polarity
         </SimButton>
       </div>
 
@@ -190,7 +190,7 @@ export function ElectromagnetSim() {
         <SimSlider label="Current" value={current} min={0} max={5} step={0.5} unit="A" disabled={!isCoil} onChange={setCurrent} />
         <SimSlider label="Turns" value={turns} min={5} max={20} step={1} unit="turns" disabled={!isCoil} onChange={setTurns} />
         <SimButton variant="outline" onClick={startChallenge}>
-          <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: lift all 5 clips
+          <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: lift all 5 clips
         </SimButton>
       </div>
 

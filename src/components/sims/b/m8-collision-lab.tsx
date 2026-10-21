@@ -279,18 +279,18 @@ export function CollisionLabSim() {
         <SimSlider label="Mass 2" value={m2} min={0.5} max={5} step={0.5} unit="kg" onChange={setM2} disabled={running} />
         <SimSlider label="Velocity 2" value={v2} min={-5} max={5} step={0.5} unit="m/s" onChange={setV2} disabled={running} />
         <SimToggle label="Elastic (bounce)" checked={elastic} onChange={setElastic} className="pb-1" />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={run} disabled={running}>
-            <Play className="h-4 w-4 mr-1" aria-hidden /> Run
+            <Play className="h-4 w-4 me-1" aria-hidden /> Run
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Prediction challenge
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Prediction challenge
           </SimButton>
         </div>
       </div>

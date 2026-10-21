@@ -290,18 +290,18 @@ export function ProjectileRangeSim() {
           ]}
           onChange={setGrav}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={fire} disabled={flyingS}>
-            <Rocket className="h-4 w-4 mr-1" aria-hidden /> Fire
+            <Rocket className="h-4 w-4 me-1" aria-hidden /> Fire
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => { setChallenge('active'); st.current.challenge = 'active'; setResult('') }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: hit 45 m
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: hit 45 m
           </SimButton>
         </div>
       </div>

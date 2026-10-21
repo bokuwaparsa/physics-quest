@@ -316,12 +316,12 @@ export function EnergyCoasterSim() {
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider label="Hill 1 height" value={h1} min={2} max={12} step={0.1} unit="m" onChange={setH1} disabled={running} />
         <SimToggle label="Friction (loss ∝ distance)" checked={friction} onChange={setFriction} className="pb-1" />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={releaseCar} disabled={running}>
-            <Play className="h-4 w-4 mr-1" aria-hidden /> Release car
+            <Play className="h-4 w-4 me-1" aria-hidden /> Release car
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
@@ -333,7 +333,7 @@ export function EnergyCoasterSim() {
               releaseCar()
             }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: just make it over
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: just make it over
           </SimButton>
         </div>
       </div>

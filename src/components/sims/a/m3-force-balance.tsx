@@ -200,19 +200,19 @@ export function ForceBalanceSim() {
           label="Right rope (pull →)" value={fRight} min={0} max={30} step={1} unit="N"
           onChange={setFRight}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={() => setRunning((r) => !r)}>
-            {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+            {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
             {running ? 'Pause' : 'Release'}
           </SimButton>
           <SimButton variant="secondary" onClick={() => { reset(false); setRunning(false); setChallenge('idle') }}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => reset(true)}
           >
-            <Scale className="h-4 w-4 mr-1" aria-hidden />
+            <Scale className="h-4 w-4 me-1" aria-hidden />
             Challenge: zero net force
           </SimButton>
         </div>

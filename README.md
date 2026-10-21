@@ -113,9 +113,13 @@ docs/QA.md                  # QA checklist & test notes
 ## 🌍 Languages & translations
 
 The language is switchable from **Settings → Language** (globe icon in the header) and persists in
-`localStorage` (`pq.locale`); a browser-language hint (`fa`/`tr`) is used on first visit. Persian sets
+`localStorage` (`pq.locale`); a browser-language hint (`fa`/`tr`) is used on first visit. A tiny
+pre-hydration script in `app/layout.tsx` applies `lang`/`dir` to `<html>` **before first paint**, so
+Persian users never see a left-to-right flash or layout jump on load. Persian sets
 `<html dir="rtl">`, loads the **Vazirmatn** typeface, mirrors the layout via CSS logical properties and
-keeps KaTeX math, code and numeric readouts left-to-right.
+keeps KaTeX math, code and numeric readouts left-to-right. Mixed-direction strings (e.g. «شتاب 10 m/s²»)
+are additionally hardened with Unicode isolates (`isolateLatin` in `components/game/tex.tsx`) so units
+and numbers never detach from their surrounding Persian text.
 
 How the translation layers fit together:
 

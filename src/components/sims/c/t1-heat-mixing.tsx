@@ -236,18 +236,18 @@ export function HeatMixingSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={pour} disabled={phase !== 'setup'}>
-            <Droplets className="h-4 w-4 mr-1" aria-hidden /> Pour B into A
+            <Droplets className="h-4 w-4 me-1" aria-hidden /> Pour B into A
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: a 40 °C bath
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: a 40 °C bath
           </SimButton>
         </div>
       </div>

@@ -195,22 +195,22 @@ export function CircularMotionSim() {
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider label="Radius" value={r} min={0.5} max={2} step={0.05} unit="m" onChange={setR} />
         <SimSlider label="Speed" value={v} min={1} max={10} step={0.1} unit="m/s" onChange={setV} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             onClick={() => { if (!snapped) { setRunning(!running); st.current.running = !running } }}
             disabled={snapped}
           >
-            {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+            {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
             {running ? 'Pause' : 'Spin'}
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> {snapped ? 'Reattach' : 'Reset'}
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> {snapped ? 'Reattach' : 'Reset'}
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => { setChallenge('active'); st.current.challenge = 'active'; setResult('') }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: a = 24 m/s²
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: a = 24 m/s²
           </SimButton>
         </div>
       </div>

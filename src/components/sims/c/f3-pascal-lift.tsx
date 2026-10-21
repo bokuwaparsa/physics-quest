@@ -242,15 +242,15 @@ export function PascalLiftSim() {
           label="Force on small piston F₁" value={f1} min={50} max={500} step={5} unit="N"
           onChange={setF1} disabled={challenge === 'active'}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: lift the car with 200 N
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: lift the car with 200 N
           </SimButton>
         </div>
       </div>

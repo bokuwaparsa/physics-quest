@@ -285,7 +285,7 @@ export function SimpleMachinesSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant={mode === 'lever' ? 'default' : 'outline'} onClick={() => switchMode('lever')}>Lever</SimButton>
           <SimButton variant={mode === 'ramp' ? 'default' : 'outline'} onClick={() => switchMode('ramp')}>Ramp</SimButton>
         </div>
@@ -301,22 +301,22 @@ export function SimpleMachinesSim() {
               onClick={() => { st.current.p = 0; st.current.pushing = true; setPushing(true) }}
               disabled={pushing}
             >
-              <Play className="h-4 w-4 mr-1" aria-hidden /> Push crate (2 m/s)
+              <Play className="h-4 w-4 me-1" aria-hidden /> Push crate (2 m/s)
             </SimButton>
           </>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant="secondary"
             onClick={() => { st.current.tilt = 0; st.current.p = 0; st.current.pushing = false; setPushing(false); setResult('') }}
           >
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge
           </SimButton>
         </div>
       </div>

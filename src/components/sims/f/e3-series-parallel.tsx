@@ -268,7 +268,7 @@ export function SeriesParallelSim() {
       variant={out[k] ? 'secondary' : 'outline'}
       onClick={() => { setOut((o) => { const c = [...o]; c[k] = !c[k]; return c }); setChallenge('idle'); setResult('') }}
     >
-      {out[k] ? <Lock className="h-4 w-4 mr-1" aria-hidden /> : <Unlock className="h-4 w-4 mr-1" aria-hidden />}
+      {out[k] ? <Lock className="h-4 w-4 me-1" aria-hidden /> : <Unlock className="h-4 w-4 me-1" aria-hidden />}
       {out[k] ? `Screw in ${name}` : `Unscrew ${name}`}
     </SimButton>
   )
@@ -295,17 +295,17 @@ export function SeriesParallelSim() {
           Parallel
         </SimButton>
         <SimToggle label="Third bulb" checked={third} onChange={(v) => { setThird(v); setChallenge('idle'); setResult('') }} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {Array.from({ length: nView }, (_, k) => screwBtn(k, ['A', 'B', 'C'][k]))}
         </div>
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
         <SimButton variant="outline" onClick={startChallenge}>
-          <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: full brightness
+          <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: full brightness
         </SimButton>
         <SimButton variant="secondary" onClick={() => { setOut([false, false, false]); setChallenge('idle'); setResult('') }}>
-          <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Screw all back
+          <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Screw all back
         </SimButton>
       </div>
 

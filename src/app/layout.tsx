@@ -29,13 +29,32 @@ export const viewport: Viewport = {
   ],
 };
 
+/**
+ * Applies the saved (or browser) language + direction to <html> BEFORE first paint.
+ * Without this, Persian users see a left-to-right flash on every load while React
+ * hydrates, which breaks the RTL illusion (mis-aligned text, layout jump).
+ * Keep in sync with src/lib/game/i18n.tsx (LOCALE_KEY = 'pq.locale').
+ */
+const directionBootstrap = `
+try {
+  var saved = localStorage.getItem('pq.locale');
+  var lang = (saved === 'fa' || saved === 'tr' || saved === 'en') ? saved : (navigator.language || 'en').slice(0, 2);
+  if (lang !== 'fa' && lang !== 'tr') lang = 'en';
+  document.documentElement.lang = lang;
+  document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+} catch (e) {}
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" dir="ltr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: directionBootstrap }} />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >

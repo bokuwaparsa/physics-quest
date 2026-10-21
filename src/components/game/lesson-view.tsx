@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { ContentBlocks } from '@/components/game/content-blocks'
-import { RichText } from '@/components/game/tex'
+import { RichText, isolateLatin } from '@/components/game/tex'
 import { PracticePanel } from '@/components/game/practice-panel'
 import { QuizPanel } from '@/components/game/quiz-panel'
 import { Celebration } from '@/components/game/celebration'
@@ -98,7 +98,7 @@ export function LessonView({ id }: { id: string }) {
             <Clock className="h-3.5 w-3.5" aria-hidden /> {t('lesson.min', { n: lesson.minutes })}
           </span>
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden /> {xpEarned}/{lesson.xp} XP
+            <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden /> <span dir="ltr" className="tabular-nums">{xpEarned}/{lesson.xp} XP</span>
           </span>
           {record?.completed && (
             <Badge className="border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
@@ -106,12 +106,12 @@ export function LessonView({ id }: { id: string }) {
             </Badge>
           )}
         </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{lesson.title}</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight"><bdi>{isolateLatin(lesson.title)}</bdi></h1>
         <p className="text-muted-foreground"><RichText text={lesson.tagline} /></p>
       </div>
 
-      {/* step rail */}
-      <ol className="grid grid-cols-4 gap-2" aria-label={t('steps.aria')}>
+      {/* step rail — 2×2 on phones so Persian labels never crush */}
+      <ol className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label={t('steps.aria')}>
         {steps.map((s, i) => (
           <li key={s.key}>
             <button
@@ -216,8 +216,8 @@ export function LessonView({ id }: { id: string }) {
       </Tabs>
 
       {/* prev / next */}
-      <div className="flex items-center justify-between border-t pt-4 gap-2">
-        <span className="text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-4">
+        <span className="text-xs text-muted-foreground min-w-0">
           {t('lesson.footer', { n: lesson.order, q: quizXpMax, p: PRACTICE_XP })}
         </span>
         {next && (

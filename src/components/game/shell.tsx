@@ -104,7 +104,7 @@ function Header({ route }: { route: Route }) {
           <span className="text-lg hidden sm:inline">Physics<span className="text-amber-500">Quest</span></span>
         </button>
 
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+        <div className="ms-auto flex items-center gap-2 sm:gap-3">
           {/* XP / level */}
           <div className="hidden md:block w-44" title={t('header.levelTitle', { xp, level: levelFor(xp), rank })}>
             <div className="flex items-center justify-between text-[10px] font-semibold text-muted-foreground mb-0.5">

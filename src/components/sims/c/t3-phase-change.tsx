@@ -273,13 +273,13 @@ export function PhaseChangeSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider label="Heating power" value={power} min={500} max={3000} step={100} unit="W" onChange={setPower} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={() => setRunning((r) => !r)} disabled={st.current.E >= E4}>
-            {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+            {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
             {running ? 'Pause' : 'Start'}
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
         </div>
       </div>
@@ -296,7 +296,7 @@ export function PhaseChangeSim() {
           className="h-8 w-24 rounded-md border bg-background px-2 text-sm"
         />
         <SimButton variant="outline" onClick={checkAnswer}>
-          <Flag className="h-4 w-4 mr-1" aria-hidden /> Check answer
+          <Flag className="h-4 w-4 me-1" aria-hidden /> Check answer
         </SimButton>
       </div>
 

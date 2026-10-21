@@ -226,16 +226,16 @@ export function OhmCircuitSim() {
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider label="Voltage" value={voltage} min={1} max={24} step={1} unit="V" onChange={setVoltage} />
         <SimSlider label="Resistance" value={resistance} min={2} max={40} step={1} unit="Ω" onChange={setResistance} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden />
+            <Flag className="h-4 w-4 me-1" aria-hidden />
             Challenge: get 0.50 A
           </SimButton>
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
         </div>
       </div>

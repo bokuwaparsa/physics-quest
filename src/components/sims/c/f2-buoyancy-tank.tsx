@@ -219,7 +219,7 @@ export function BuoyancyTankSim() {
             onChange={setCustomRho}
           />
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant="secondary" disabled={challenge === 'active'} onClick={() => setFluidRho(900)}>Oil 900</SimButton>
           <SimButton variant="secondary" disabled={challenge === 'active'} onClick={() => setFluidRho(1000)}>Water 1000</SimButton>
           <SimButton variant="secondary" disabled={challenge === 'active'} onClick={() => setFluidRho(1400)}>Honey 1400</SimButton>
@@ -227,18 +227,18 @@ export function BuoyancyTankSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={drop}>
-            <ArrowDown className="h-4 w-4 mr-1" aria-hidden /> Drop
+            <ArrowDown className="h-4 w-4 me-1" aria-hidden /> Drop
           </SimButton>
           <SimButton variant="secondary" onClick={() => { resetBlock(); setChallenge('idle'); setResult('') }}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => { resetBlock(); setFluidRho(1000); setChallenge('active'); setResult('') }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: ½ submerged
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: ½ submerged
           </SimButton>
         </div>
       </div>

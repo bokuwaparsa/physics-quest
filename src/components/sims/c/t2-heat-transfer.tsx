@@ -261,15 +261,15 @@ export function HeatTransferSim() {
             {lampOn && <SimSlider label="Lamp intensity" value={lampI} min={0} max={100} step={5} unit="%" onChange={setLampI} />}
           </>
         )}
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant="secondary" onClick={reset}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: best conductor, 10 s
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: best conductor, 10 s
           </SimButton>
         </div>
       </div>

@@ -194,15 +194,15 @@ export function PressureLabSim() {
             if (challenge === 'active' || challenge === 'lost') evaluate(v)
           }}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant="secondary" onClick={() => { setChallenge('idle'); setResult(''); setForce(200) }}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={() => { setForce(500); setChallenge('active'); setResult(''); evaluate(surface) }}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: stay under 1 MPa
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: stay under 1 MPa
           </SimButton>
         </div>
       </div>

@@ -287,28 +287,28 @@ export function DopplerEchoSim() {
         <div className="flex flex-wrap gap-2">
           {mode === 'doppler' && (
             <SimButton onClick={() => setRunning((r) => !r)}>
-              {running ? <Pause className="h-4 w-4 mr-1" aria-hidden /> : <Play className="h-4 w-4 mr-1" aria-hidden />}
+              {running ? <Pause className="h-4 w-4 me-1" aria-hidden /> : <Play className="h-4 w-4 me-1" aria-hidden />}
               {running ? 'Pause' : 'Play'}
             </SimButton>
           )}
           {mode === 'echo' && (
             <SimButton onClick={sendChirp} disabled={chirping}>
-              <Send className="h-4 w-4 mr-1" aria-hidden /> Send chirp
+              <Send className="h-4 w-4 me-1" aria-hidden /> Send chirp
             </SimButton>
           )}
           <SimButton variant="secondary" onClick={() => { stopMotion(); setResult('') }}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
             disabled={challenge === 'won'}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: range the wall
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: range the wall
           </SimButton>
           {challenge === 'won' && (
             <SimButton variant="secondary" onClick={newWall}>
-              <Sparkles className="h-4 w-4 mr-1" aria-hidden /> New hidden wall
+              <Sparkles className="h-4 w-4 me-1" aria-hidden /> New hidden wall
             </SimButton>
           )}
         </div>

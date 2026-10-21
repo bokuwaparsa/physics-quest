@@ -319,31 +319,31 @@ export function ChargeFieldSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton variant={pending === 1 ? 'default' : 'outline'} onClick={() => setPending(1)}>
-            <Plus className="h-4 w-4 mr-1" aria-hidden /> Place positive
+            <Plus className="h-4 w-4 me-1" aria-hidden /> Place positive
           </SimButton>
           <SimButton variant={pending === -1 ? 'default' : 'outline'} onClick={() => setPending(-1)}>
-            <Minus className="h-4 w-4 mr-1" aria-hidden /> Place negative
+            <Minus className="h-4 w-4 me-1" aria-hidden /> Place negative
           </SimButton>
           <SimButton
             variant="secondary"
             onClick={() => { charges.current = []; setCount(0); setNote('') }}
           >
-            <Trash2 className="h-4 w-4 mr-1" aria-hidden /> Clear
+            <Trash2 className="h-4 w-4 me-1" aria-hidden /> Clear
           </SimButton>
         </div>
         <SimToggle label="Release test charge" checked={release} onChange={setRelease} />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden />
+            <Flag className="h-4 w-4 me-1" aria-hidden />
             Challenge: reach the flag
           </SimButton>
           <SimButton variant="secondary" onClick={resetTest}>
-            <RotateCcw className="h-4 w-4 mr-1" aria-hidden /> Reset test charge
+            <RotateCcw className="h-4 w-4 me-1" aria-hidden /> Reset test charge
           </SimButton>
         </div>
       </div>

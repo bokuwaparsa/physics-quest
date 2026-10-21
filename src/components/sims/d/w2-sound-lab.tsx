@@ -193,16 +193,16 @@ export function SoundLabSim() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <SimButton onClick={playTone}>
-            <Volume2 className="h-4 w-4 mr-1" aria-hidden /> Play tone
+            <Volume2 className="h-4 w-4 me-1" aria-hidden /> Play tone
           </SimButton>
           <SimButton
             variant={challenge === 'active' ? 'destructive' : 'outline'}
             onClick={startChallenge}
             disabled={challenge === 'won'}
           >
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: λ = 0.5 m
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: λ = 0.5 m
           </SimButton>
         </div>
       </div>

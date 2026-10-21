@@ -102,20 +102,20 @@ export function RelativityClockSim() {
 
       <div className="flex flex-wrap items-end gap-3">
         <SimButton variant={isClock ? 'default' : 'outline'} onClick={() => { setTab('clock'); setResult('') }}>
-          <Zap className="h-4 w-4 mr-1" aria-hidden /> Light clock
+          <Zap className="h-4 w-4 me-1" aria-hidden /> Light clock
         </SimButton>
         <SimButton variant={!isClock ? 'default' : 'outline'} onClick={() => { setTab('slit'); setResult('') }}>
-          <Sparkles className="h-4 w-4 mr-1" aria-hidden /> Double slit
+          <Sparkles className="h-4 w-4 me-1" aria-hidden /> Double slit
         </SimButton>
         {isClock ? (
           <SimSlider label="Ship speed" value={beta} min={0} max={0.99} step={0.01} unit="c" onChange={setBeta} />
         ) : (
           <>
             <SimButton onClick={fire}>
-              <Crosshair className="h-4 w-4 mr-1" aria-hidden /> Fire 100 photons
+              <Crosshair className="h-4 w-4 me-1" aria-hidden /> Fire 100 photons
             </SimButton>
             <SimButton variant="ghost" onClick={clearPattern}>
-              <Trash2 className="h-4 w-4 mr-1" aria-hidden /> Clear pattern
+              <Trash2 className="h-4 w-4 me-1" aria-hidden /> Clear pattern
             </SimButton>
           </>
         )}
@@ -124,7 +124,7 @@ export function RelativityClockSim() {
       {isClock && (
         <div className="flex flex-wrap items-end gap-3">
           <SimButton variant="outline" onClick={startChallenge}>
-            <Flag className="h-4 w-4 mr-1" aria-hidden /> Challenge: gamma at 0.8c
+            <Flag className="h-4 w-4 me-1" aria-hidden /> Challenge: gamma at 0.8c
           </SimButton>
         </div>
       )}

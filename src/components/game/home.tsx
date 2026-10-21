@@ -12,7 +12,7 @@ import { useLessons, useUnits, useDifficultyLabel, useRankFor } from '@/lib/game
 import { useGame } from '@/lib/game/progress'
 import { navigate } from '@/lib/game/router'
 import { useI18n } from '@/lib/game/i18n'
-import { RichText } from '@/components/game/tex'
+import { RichText, isolateLatin } from '@/components/game/tex'
 import type { Lesson, UnitId } from '@/lib/game/types'
 import {
   Rocket, Droplets, Flame, Waves, Sun, Zap, Atom, Search, Play,
@@ -94,9 +94,9 @@ export function Home() {
             </Button>
           </div>
         </div>
-        {/* decorative orbit */}
-        <div aria-hidden className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full border-4 border-dashed border-amber-500/20" />
-        <div aria-hidden className="pointer-events-none absolute -right-6 top-10 h-24 w-24 rounded-full border-2 border-emerald-500/20" />
+        {/* decorative orbit — mirrored automatically in RTL via logical insets */}
+        <div aria-hidden className="pointer-events-none absolute -end-16 -top-16 h-64 w-64 rounded-full border-4 border-dashed border-amber-500/20" />
+        <div aria-hidden className="pointer-events-none absolute -end-6 top-10 h-24 w-24 rounded-full border-2 border-emerald-500/20" />
       </section>
 
       {/* stats */}
@@ -110,7 +110,7 @@ export function Home() {
       {/* search + filters */}
       <section className="space-y-3" aria-label={t('aria.search')}>
         <div className="flex flex-col gap-3 sm:flex-row">
-          <div className="relative flex-1">
+          <div className="relative min-w-0 flex-1">
             <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input
               value={query}
@@ -122,7 +122,7 @@ export function Home() {
           </div>
           <div className="flex gap-2">
             <Select value={unitFilter} onValueChange={(v) => setUnitFilter(v as UnitId | 'all')}>
-              <SelectTrigger className="w-[170px]" aria-label={t('aria.filterWorld')}>
+              <SelectTrigger className="min-w-0 flex-1 sm:w-[170px] sm:flex-none" aria-label={t('aria.filterWorld')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -131,7 +131,7 @@ export function Home() {
               </SelectContent>
             </Select>
             <Select value={diffFilter} onValueChange={(v) => setDiffFilter(v as Lesson['difficulty'] | 'all')}>
-              <SelectTrigger className="w-[130px]" aria-label={t('aria.filterDiff')}>
+              <SelectTrigger className="min-w-0 flex-1 sm:w-[130px] sm:flex-none" aria-label={t('aria.filterDiff')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -210,10 +210,10 @@ export function Home() {
                               {isDone ? '✓' : i + 1}
                             </span>
                             <span className="min-w-0 flex-1">
-                              <span className="block truncate text-sm font-medium group-hover:underline underline-offset-2">
-                                {l.title}
-                              </span>
-                              <span className="block truncate text-xs text-muted-foreground"><RichText text={l.tagline} /></span>
+                              <bdi className="block truncate text-sm font-medium group-hover:underline underline-offset-2">
+                                {isolateLatin(l.title)}
+                              </bdi>
+                              <bdi className="block truncate text-xs text-muted-foreground"><RichText text={l.tagline} /></bdi>
                             </span>
                             <span className={cn('h-2 w-2 shrink-0 rounded-full', DIFF_DOT[l.difficulty])} title={diffLabel[l.difficulty]} aria-label={t('diff.title', { d: diffLabel[l.difficulty] })} />
                           </button>
@@ -284,9 +284,9 @@ function LessonChip({ lesson, done }: { lesson: Lesson; done: boolean }) {
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white" style={{ background: unit.hex }}>
         <Icon className="h-4 w-4" aria-hidden />
       </span>
-      <span className="min-w-0">
-        <span className="block text-sm font-semibold group-hover:underline underline-offset-2">{lesson.title}</span>
-        <span className="block truncate text-xs text-muted-foreground">{unit.title} · {diffLabel[lesson.difficulty]} · {t('lesson.min', { n: lesson.minutes })}</span>
+      <span className="min-w-0 flex-1">
+        <bdi className="block text-sm font-semibold group-hover:underline underline-offset-2">{isolateLatin(lesson.title)}</bdi>
+        <bdi className="block truncate text-xs text-muted-foreground">{unit.title} · {diffLabel[lesson.difficulty]} · {t('lesson.min', { n: lesson.minutes })}</bdi>
       </span>
       {done && <span className="ms-auto text-emerald-500" aria-label={t('aria.mastered')}>✓</span>}
     </button>
