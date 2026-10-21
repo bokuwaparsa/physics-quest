@@ -30,6 +30,16 @@ export function dirFor(locale: Locale): 'ltr' | 'rtl' {
   return locale === 'fa' ? 'rtl' : 'ltr'
 }
 
+/**
+ * Mirror the locale into a cookie so the server can render <html lang/dir>
+ * correctly on the next visit (localStorage is not visible to SSR).
+ */
+function persistCookie(locale: Locale) {
+  try {
+    document.cookie = `${LOCALE_KEY}=${locale};path=/;max-age=31536000;samesite=lax`
+  } catch { /* storage unavailable */ }
+}
+
 // ─── Tiny external store (hydration-safe: server + first client render = 'en')
 let storeLocale: Locale = 'en'
 const listeners = new Set<() => void>()
@@ -45,6 +55,7 @@ export function setLocale(locale: Locale) {
   if (locale === storeLocale) return
   storeLocale = locale
   try { window.localStorage.setItem(LOCALE_KEY, locale) } catch { /* storage unavailable */ }
+  persistCookie(locale)
   applyDocument(locale)
   listeners.forEach((l) => l())
 }
@@ -111,7 +122,10 @@ export function useI18n(): I18n {
 export function bootstrapLocale() {
   const detected = detectLocale()
   if (detected !== storeLocale) setLocale(detected)
-  else applyDocument(storeLocale)
+  else {
+    persistCookie(storeLocale)
+    applyDocument(storeLocale)
+  }
 }
 
 export function useT() {

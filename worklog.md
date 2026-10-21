@@ -384,3 +384,19 @@ Work Log:
 
 Stage Summary:
 - Persian UI is now truly RTL end-to-end: correct first-paint direction, mirrored header/footer, start-side accents, atomic Latin islands, working title truncation in the lesson index, and phone-safe layouts. No content or lesson files touched; scope limited to chrome/layout/i18n plumbing + glossary additions.
+
+---
+Task ID: 12
+Agent: orchestrator (main)
+Task: Fix "Persian still not RTL" — lesson content rendered as an LTR bidi paragraph despite html dir=rtl.
+
+Work Log:
+- Root cause identified by DOM inspection: Radix primitives (Tabs root `div.flex.flex-col.gap-2`, Dialog, Select, Slider, Collapsible, Toast, …) hardcode `dir="ltr"` on their root elements by default. The shadcn `<Tabs>` wraps the ENTIRE lesson body (learn/sim/practice/quiz), so every paragraph, table, list, objective grid and formula caption inside it inherited an LTR bidi paragraph — exactly the user's screenshot (left-aligned text, LTR table column order, left-side bullets, scrambled caption) while page chrome stayed RTL.
+- Fix 1 (core): new `src/components/game/app-direction.tsx` wraps the whole app (children + Toaster, mounted in `src/app/layout.tsx`) in Radix `DirectionProvider` from `@radix-ui/react-direction` (added explicitly to package.json, ^1.1.1), with `dir` taken from `useI18n().dir` — fixes every Radix primitive at once, no per-component edits.
+- Fix 2 (SSR direction): `setLocale`/`bootstrapLocale` now also persist the locale to cookie `pq.locale` (1y, samesite=lax); `layout.tsx` awaits `cookies()` and renders `<html lang dir>` from it, so Persian SSR output is `<html lang="fa" dir="rtl">` with zero dependence on client scripts. Inline pre-paint bootstrap script extended to fall back to the cookie (localStorage → cookie → navigator).
+- Fix 3 (bidi islands): pure-Latin fragments like the table cell "≈ 1.4 m/s" were skipped by `isolateLatin` (no RTL chars) and got reordered to "m/s 1.4 ≈" in RTL paragraphs. `isolateLatin(text, force)` now accepts `force` (true on RTL pages via `useI18n().dir` inside `RichText`) and ISLAND_RE gained leading math symbols (≈ ~ ± × ÷ < > ≤ ≥) so the ≈ stays attached to its value.
+- Browser-verified (agent-browser): FA desktop 1280 + user-like 900 (no sidebar) + mobile 390×844 — objectives first card right, paragraphs right-aligned, caption "تندی v بر حسب m/s. مسافت d بر حسب m. زمان t بر حسب s" correct, table mirrored with atomic "≈ 1.4 m/s"; Radix Tabs root now dir=rtl (was ltr); SSR curl shows `<html lang="fa" dir="rtl">` from cookie; practice + quiz interactive runs in FA (radio select, submit, KaTeX feedback, footer); sidebar sheet opens right; sim sliders/play/reset RTL; playground + progress pages RTL; EN and TR regressions clean (ltr, tab root ltr); no console/page errors; `bun run lint` 0 errors; `bunx tsc --noEmit` clean for src/.
+
+Stage Summary:
+- Files changed: package.json (+@radix-ui/react-direction), src/app/layout.tsx (cookie SSR dir + AppDirection mount), src/lib/game/i18n.tsx (cookie persistence), src/components/game/app-direction.tsx (new), src/components/game/tex.tsx (isolateLatin force param + symbol-leading islands).
+- Persian lesson content is now genuinely RTL end-to-end, including inside all Radix-managed tabs/dialogs/selects/sliders; direction survives reloads, SSR and even disabled scripts.

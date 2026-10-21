@@ -1,8 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import { Toaster } from "@/components/ui/toaster";
+import { AppDirection } from "@/components/game/app-direction";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +39,11 @@ export const viewport: Viewport = {
  */
 const directionBootstrap = `
 try {
-  var saved = localStorage.getItem('pq.locale');
+  function cookieLocale() {
+    var m = document.cookie.match(/(?:^|; )pq.locale=([a-z]{2})/);
+    return m ? m[1] : null;
+  }
+  var saved = localStorage.getItem('pq.locale') || cookieLocale();
   var lang = (saved === 'fa' || saved === 'tr' || saved === 'en') ? saved : (navigator.language || 'en').slice(0, 2);
   if (lang !== 'fa' && lang !== 'tr') lang = 'en';
   document.documentElement.lang = lang;
@@ -45,21 +51,37 @@ try {
 } catch (e) {}
 `;
 
-export default function RootLayout({
+const LOCALES = new Set(["en", "fa", "tr"]);
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Server-side direction: if the visitor already picked a language (cookie),
+  // render <html lang dir> correctly in the SSR output itself — RTL no longer
+  // depends on any client script running.
+  let initial = "en";
+  try {
+    const cookieLocale = (await cookies()).get("pq.locale")?.value;
+    if (cookieLocale && LOCALES.has(cookieLocale)) initial = cookieLocale;
+  } catch {
+    /* cookies unavailable (e.g. static export) */
+  }
+  const dir = initial === "fa" ? "rtl" : "ltr";
+
   return (
-    <html lang="en" dir="ltr" suppressHydrationWarning>
+    <html lang={initial} dir={dir} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: directionBootstrap }} />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
-        <Toaster />
+        <AppDirection>
+          {children}
+          <Toaster />
+        </AppDirection>
       </body>
     </html>
   );
