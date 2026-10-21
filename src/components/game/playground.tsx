@@ -5,17 +5,19 @@ import { useEffect, useSyncExternalStore } from 'react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { getSim } from '@/components/sims/registry'
 import { useGame } from '@/lib/game/progress'
+import { useI18n } from '@/lib/game/i18n'
 import { Rocket, Orbit, Waves } from 'lucide-react'
 
 const SANDBOX = [
-  { key: 'projectile-range', label: 'Launch lab', icon: Rocket, blurb: 'Angle, speed and gravity with no rules — how far can you fling things?' },
-  { key: 'collision-lab', label: 'Collision lab', icon: Orbit, blurb: 'Crash pucks of any mass and speed. Momentum always balances the books.' },
-  { key: 'wave-machine', label: 'Wave machine', icon: Waves, blurb: 'Stretch, squeeze and speed up waves just for fun.' },
+  { key: 'projectile-range', labelKey: 'pg.projectile', descKey: 'pg.projectileDesc', icon: Rocket },
+  { key: 'collision-lab', labelKey: 'pg.collision', descKey: 'pg.collisionDesc', icon: Orbit },
+  { key: 'wave-machine', labelKey: 'pg.wave', descKey: 'pg.waveDesc', icon: Waves },
 ]
 
 const emptySubscribe = () => () => {}
 
 export function Playground() {
+  const { t } = useI18n()
   const awardSpecial = useGame((s) => s.awardSpecial)
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
   useEffect(() => {
@@ -25,10 +27,9 @@ export function Playground() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">Physics Playground</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t('pg.title')}</h1>
         <p className="max-w-2xl text-muted-foreground">
-          No quizzes, no goals — just open-ended sandboxes where you can experiment freely.
-          Perfect for testing wild ideas after a lesson (or before one).
+          {t('pg.sub')}
         </p>
       </header>
 
@@ -36,7 +37,7 @@ export function Playground() {
         <TabsList className="flex-wrap h-auto">
           {SANDBOX.map((s) => (
             <TabsTrigger key={s.key} value={s.key} className="gap-1.5">
-              <s.icon className="h-4 w-4" aria-hidden /> {s.label}
+              <s.icon className="h-4 w-4" aria-hidden /> {t(s.labelKey)}
             </TabsTrigger>
           ))}
         </TabsList>
@@ -44,7 +45,7 @@ export function Playground() {
           const Sim = getSim(s.key)
           return (
             <TabsContent key={s.key} value={s.key} className="mt-4 space-y-3">
-              <p className="text-sm text-muted-foreground">{s.blurb}</p>
+              <p className="text-sm text-muted-foreground">{t(s.descKey)}</p>
               {mounted ? <Sim lessonId={s.key} sandbox /> : null}
             </TabsContent>
           )

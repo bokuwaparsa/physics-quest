@@ -9,6 +9,7 @@ import type { Lesson, Question } from '@/lib/game/types'
 import { PASS_PERCENT, useGame } from '@/lib/game/progress'
 import { Explanation } from '@/components/game/celebration'
 import { RichText } from '@/components/game/tex'
+import { useI18n } from '@/lib/game/i18n'
 import { Check, ArrowRight, RotateCcw, Trophy } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -20,6 +21,7 @@ export function QuizPanel({
   lesson: Lesson
   onMastered: (xpGain: number, score: number) => void
 }) {
+  const { t } = useI18n()
   const recordQuiz = useGame((s) => s.recordQuiz)
   const quizBest = useGame((s) => s.lessons[lesson.id]?.quizBest ?? 0)
   const awardSpecial = useGame((s) => s.awardSpecial)
@@ -78,16 +80,16 @@ export function QuizPanel({
     return (
       <div className="rounded-xl border bg-card p-6 text-center space-y-3">
         <p className="text-3xl" aria-hidden>{passed ? '🏅' : score >= 40 ? '💪' : '🌱'}</p>
-        <h3 className="text-xl font-bold">{passed ? 'Quiz passed!' : 'Good effort!'}</h3>
+        <h3 className="text-xl font-bold">{passed ? t('quiz.passTitle') : t('quiz.failTitle')}</h3>
         <p className="text-4xl font-extrabold tabular-nums">{score}%</p>
         <p className="text-sm text-muted-foreground">
-          {correctCount} of {questions.length} correct · Best score saved: <b>{Math.max(score, quizBest)}%</b>
-          {passed ? '' : ' — you need 70% to master this lesson. Review, practice, and try again anytime!'}
+          {t('quiz.result', { c: correctCount, n: questions.length, best: Math.max(score, quizBest) })}
+          {passed ? '' : t('quiz.need')}
         </p>
         {!passed && (
           <div>
             <Button onClick={retry} variant="secondary">
-              <RotateCcw className="mr-1 h-4 w-4" aria-hidden /> Retry quiz
+              <RotateCcw className="me-1 h-4 w-4" aria-hidden /> {t('quiz.retry')}
             </Button>
           </div>
         )}
@@ -101,17 +103,17 @@ export function QuizPanel({
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
       <div className="space-y-2">
-        <div className="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          <span>Quiz · Question {idx + 1} of {questions.length}</span>
-          <span className="inline-flex items-center gap-1"><Trophy className="h-3.5 w-3.5 text-amber-500" aria-hidden /> pass ≥ 70%</span>
+        <div className="flex items-center justify-between gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <span>{t('quiz.head', { i: idx + 1, n: questions.length })}</span>
+          <span className="inline-flex items-center gap-1"><Trophy className="h-3.5 w-3.5 text-amber-500" aria-hidden /> {t('quiz.passNote')}</span>
         </div>
-        <Progress value={pct} aria-label="Quiz progress" />
+        <Progress value={pct} aria-label={t('aria.quizProgress')} />
       </div>
 
       <p className="text-base font-medium leading-relaxed"><RichText text={q.prompt} /></p>
 
       {q.kind === 'mc' ? (
-        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Answer choices">
+        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('aria.choices')}>
           {q.choices?.map((c, i) => {
             const isPicked = choice === i
             const reveal = status === 'answered'
@@ -124,7 +126,7 @@ export function QuizPanel({
                 disabled={reveal}
                 onClick={() => setChoice(i)}
                 className={cn(
-                  'rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  'rounded-lg border px-4 py-3 text-start text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   reveal && isRight && 'border-emerald-500 bg-emerald-500/10',
                   reveal && isPicked && !isRight && 'border-rose-500 bg-rose-500/10',
                   !reveal && isPicked && 'border-primary bg-primary/10',
@@ -140,7 +142,7 @@ export function QuizPanel({
       ) : (
         <div className="flex items-center gap-2 max-w-xs">
           <Input
-            aria-label="Your answer"
+            aria-label={t('aria.answer')}
             inputMode="decimal"
             value={input}
             placeholder="?"
@@ -158,11 +160,11 @@ export function QuizPanel({
       <div className="flex flex-wrap gap-2">
         {status === 'asking' ? (
           <Button onClick={check} disabled={q.kind === 'numeric' ? !input : choice === null}>
-            <Check className="mr-1 h-4 w-4" aria-hidden /> Submit
+            <Check className="me-1 h-4 w-4" aria-hidden /> {t('quiz.submit')}
           </Button>
         ) : (
           <Button onClick={next}>
-            {idx + 1 >= questions.length ? 'See results' : 'Next question'} <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+            {idx + 1 >= questions.length ? t('quiz.seeResults') : t('quiz.nextQ')} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
           </Button>
         )}
       </div>

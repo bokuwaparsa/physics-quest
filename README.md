@@ -19,6 +19,7 @@ no tracking, no paywalls, no locked content.
 - **30 hand-built canvas simulations** with challenges, live readouts and correct physics (SI units)
 - **Learning loop:** Learn → Simulate → Practice (hints + instant feedback) → Quiz (pass ≥ 70 %) → badge + XP
 - **Game layer:** XP, levels & ranks, per-lesson badges, 8 special badges, day streaks, confetti
+- **3 languages with full translations:** 🇬🇧 English · 🇮🇷 **فارسی (Persian, full RTL)** · 🇹🇷 Türkçe — every lesson, question, hint, simulation control and UI string is translated; the choice is saved and auto-detected from the browser. Physics terms use a consistent in-game glossary; math stays LTR/LaTeX everywhere.
 - **Physics Playground** — 3 open-ended sandboxes (projectiles, collisions, waves) for free play
 - **Find anything fast:** home search + filters (world, difficulty), persistent sidebar index, **direct URL per lesson** (`#/lesson/<id>`)
 - **Progress saved locally** (localStorage via Zustand persist) with a one-click **reset**
@@ -83,6 +84,7 @@ The game is a single client-rendered page with **zero API routes and zero server
 | Math | KaTeX | MIT (fonts: SIL OFL) |
 | Sims | Hand-written HTML5 Canvas 2D — no third-party physics engine, no image assets | — |
 | Theme | next-themes | MIT |
+| i18n | Custom locale store + typed dictionaries (`src/lib/game/dict/`) + lesson translation overlays (`src/data/i18n/`); Vazirmatn font for Persian | MIT / SIL OFL |
 
 Full attribution table: open the app → **Licenses & Attribution** (or `#/licenses`).
 
@@ -106,6 +108,29 @@ docs/QA.md                  # QA checklist & test notes
 1. Append a `Lesson` object to the right `src/data/lessons-*.ts` file (unique `id`, `order`, `simKey`).
 2. Create the sim component and register it in the matching `src/components/sims/slice-*.ts`.
 3. Done — it appears in the world map, sidebar, search, and gets a direct URL automatically.
+4. (Optional) add its Persian/Turkish translation to a `src/data/i18n/<fa|tr>/part-*.ts` overlay — otherwise it gracefully falls back to English.
+
+## 🌍 Languages & translations
+
+The language is switchable from **Settings → Language** (globe icon in the header) and persists in
+`localStorage` (`pq.locale`); a browser-language hint (`fa`/`tr`) is used on first visit. Persian sets
+`<html dir="rtl">`, loads the **Vazirmatn** typeface, mirrors the layout via CSS logical properties and
+keeps KaTeX math, code and numeric readouts left-to-right.
+
+How the translation layers fit together:
+
+| Layer | Where | Notes |
+|---|---|---|
+| UI chrome (~200 keys) | `src/lib/game/dict/en|fa|tr.ts` | header, home, lesson view, practice/quiz, pages, ranks, badges, unit names |
+| Simulation vocabulary (~330 terms) | `src/lib/game/dict/terms-fa.ts`, `terms-tr.ts` | applied automatically inside sim-kit controls — sliders, readouts, selects, buttons, legends, sim titles/briefs. English fallback for unmapped terms (e.g. text drawn inside canvas art) |
+| Lesson content (30 lessons × 2 locales) | `src/data/i18n/fa/part-01..10.ts`, `src/data/i18n/tr/part-01..10.ts` | typed overlays (`schema.ts`) merged over the English base per lesson/question id — any missing field falls back to English |
+
+**Adding a language** (e.g. Spanish): add `dict/es.ts` + `dict/terms-es.ts`, register them in `src/lib/game/i18n.tsx`
+(`LOCALES`, `DICTS`, `TERMS`), add `dirFor` if the language is RTL, then create `src/data/i18n/es/part-*.ts`
+overlays (or ship English-content fallback first and translate incrementally).
+
+Known fallbacks (by design): text drawn inside canvas artwork (axis labels like *time (s)*) and canvas
+`aria-label` summaries remain English; everything else is fully translated.
 
 ## ♿ Accessibility notes
 

@@ -158,3 +158,44 @@
   background: color-mix(in oklab, var(--muted-foreground) 35%, transparent);
   border-radius: 8px;
 }
+
+/* ── Physics Quest i18n: fonts + RTL ───────────────────────────────────────── */
+
+/* Vazirmatn for Persian; Inter fallback for Turkish/Latin when Geist lacks glyphs */
+@font-face {
+  font-family: 'Vazirmatn';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/fonts/webfonts/Vazirmatn[wght].woff2') format('woff2-variations');
+}
+
+html[lang="fa"] body {
+  font-family: 'Vazirmatn', 'Segoe UI', Tahoma, var(--font-geist-sans), sans-serif;
+  letter-spacing: 0 !important;
+}
+html[lang="tr"] body {
+  font-family: 'Inter', 'Segoe UI', var(--font-geist-sans), sans-serif;
+}
+
+/* math and numeric islands always read left-to-right, even in RTL pages */
+[dir="rtl"] .katex {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+[dir="rtl"] .font-mono {
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+/* keep canvas art LTR (physics coordinates) inside RTL pages */
+[dir="rtl"] canvas {
+  direction: ltr;
+}
+
+/* Persian headings: drop tight Latin tracking (breaks Arabic-script joins) */
+html[lang="fa"] .tracking-tight,
+html[lang="fa"] .tracking-wide,
+html[lang="fa"] .tracking-tighter {
+  letter-spacing: 0 !important;
+}

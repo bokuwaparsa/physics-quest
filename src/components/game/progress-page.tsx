@@ -11,10 +11,12 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import {
-  UNITS, allLessons, levelFor, rankFor, xpIntoLevel, SPECIAL_BADGES,
+  levelFor, xpIntoLevel,
 } from '@/lib/game/curriculum'
+import { useLessons, useUnits, useRankFor, useSpecialBadges } from '@/lib/game/l10n'
 import { useGame } from '@/lib/game/progress'
 import { navigate } from '@/lib/game/router'
+import { useI18n } from '@/lib/game/i18n'
 import { UNIT_ICONS } from '@/components/game/home'
 import {
   Trophy, Zap, Flame, BookOpenCheck, RotateCcw, Lock, CheckCircle2, Compass, Play,
@@ -23,8 +25,13 @@ import { cn } from '@/lib/utils'
 import * as Lucide from 'lucide-react'
 
 export function ProgressPage() {
+  const { t } = useI18n()
   const state = useGame()
-  const total = allLessons().length
+  const rank = useRankFor(state.xp)
+  const specialBadges = useSpecialBadges()
+  const units = useUnits()
+  const allLessons = useLessons()
+  const total = allLessons.length
   const mastered = useMemo(() => Object.values(state.lessons).filter((l) => l.completed).length, [state.lessons])
 
   const resetAll = useGame((s) => s.resetAll)
@@ -33,30 +40,29 @@ export function ProgressPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">My Progress</h1>
-          <p className="text-muted-foreground">Everything is stored in this browser only — nothing leaves your device.</p>
+          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">{t('nav.progress')}</h1>
+          <p className="text-muted-foreground">{t('pp.sub')}</p>
         </div>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="destructive" size="sm">
-              <RotateCcw className="mr-1 h-4 w-4" aria-hidden /> Reset all progress
+              <RotateCcw className="me-1 h-4 w-4" aria-hidden /> {t('pp.reset')}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Reset all progress?</AlertDialogTitle>
+              <AlertDialogTitle>{t('pp.resetTitle')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This erases all XP, badges, streaks and quiz scores in this browser. Lessons stay unlocked —
-                nothing is ever gated — but your journey starts fresh. This cannot be undone.
+                {t('pp.resetBody')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Keep my progress</AlertDialogCancel>
+              <AlertDialogCancel>{t('pp.resetCancel')}</AlertDialogCancel>
               <AlertDialogAction
                 className="bg-destructive text-white hover:bg-destructive/90"
                 onClick={() => resetAll()}
               >
-                Yes, reset everything
+                {t('pp.resetOk')}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -64,18 +70,18 @@ export function ProgressPage() {
       </header>
 
       {/* stats */}
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Stats">
-        <Stat icon={Zap} label="Total XP" value={`${state.xp}`} sub={`${xpIntoLevel(state.xp)}/300 to next level`} />
-        <Stat icon={Trophy} label="Level" value={`${levelFor(state.xp)}`} sub={rankFor(state.xp)} />
-        <Stat icon={BookOpenCheck} label="Mastered" value={`${mastered}/${total}`} sub="lessons" />
-        <Stat icon={Flame} label="Day streak" value={`${state.streak}`} sub="play daily to grow it" />
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label={t('pp.statsAria')}>
+        <Stat icon={Zap} label={t('stats.xp')} value={`${state.xp}`} sub={t('stats.toNext', { n: xpIntoLevel(state.xp) })} />
+        <Stat icon={Trophy} label={t('stats.level')} value={`${levelFor(state.xp)}`} sub={rank} />
+        <Stat icon={BookOpenCheck} label={t('stats.mastered')} value={`${mastered}/${total}`} sub={t('pp.lessonsCount')} />
+        <Stat icon={Flame} label={t('stats.streak')} value={`${state.streak}`} sub={t('pp.playDaily')} />
       </section>
 
       {/* unit bars */}
-      <section className="space-y-3" aria-label="Progress by world">
-        <h2 className="text-lg font-bold">Worlds</h2>
+      <section className="space-y-3" aria-label={t('pp.worldAria')}>
+        <h2 className="text-lg font-bold">{t('pp.worlds')}</h2>
         <div className="grid gap-3 sm:grid-cols-2">
-          {UNITS.map((u) => {
+          {units.map((u) => {
             const done = u.lessonIds.filter((id) => state.lessons[id]?.completed).length
             const Icon = UNIT_ICONS[u.id]
             return (
@@ -87,7 +93,7 @@ export function ProgressPage() {
                   <p className="flex-1 text-sm font-semibold">{u.title}</p>
                   <span className="text-xs tabular-nums text-muted-foreground">{done}/{u.lessonIds.length}</span>
                 </div>
-                <Progress value={(done / Math.max(1, u.lessonIds.length)) * 100} className="mt-2.5 h-1.5" aria-label={`${u.title} progress`} />
+                <Progress value={(done / Math.max(1, u.lessonIds.length)) * 100} className="mt-2.5 h-1.5" aria-label={t('unit.progressAria', { unit: u.title })} />
               </div>
             )
           })}
@@ -95,10 +101,10 @@ export function ProgressPage() {
       </section>
 
       {/* special badges */}
-      <section className="space-y-3" aria-label="Special badges">
-        <h2 className="text-lg font-bold">Special badges</h2>
+      <section className="space-y-3" aria-label={t('pp.badges')}>
+        <h2 className="text-lg font-bold">{t('pp.badges')}</h2>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {SPECIAL_BADGES.map((b) => {
+          {specialBadges.map((b) => {
             const earned = state.specialBadges.includes(b.id)
             const Icon = (Lucide as unknown as Record<string, typeof Zap>)[b.icon] ?? Zap
             return (
@@ -121,24 +127,24 @@ export function ProgressPage() {
       </section>
 
       {/* all lessons table */}
-      <section className="space-y-3" aria-label="Lesson scores">
-        <h2 className="text-lg font-bold">Lesson scores</h2>
+      <section className="space-y-3" aria-label={t('pp.scores')}>
+        <h2 className="text-lg font-bold">{t('pp.scores')}</h2>
         <div className="overflow-hidden rounded-xl border">
           <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left">
+            <thead className="bg-muted/50 text-start">
               <tr>
-                <th className="px-3 py-2 font-semibold">Lesson</th>
-                <th className="px-3 py-2 font-semibold">Practice</th>
-                <th className="px-3 py-2 font-semibold">Best quiz</th>
-                <th className="px-3 py-2 font-semibold">XP</th>
-                <th className="px-3 py-2 font-semibold">Status</th>
-                <th><span className="sr-only">Open</span></th>
+                <th className="px-3 py-2 font-semibold text-start">{t('pp.colLesson')}</th>
+                <th className="px-3 py-2 font-semibold text-start">{t('pp.colPractice')}</th>
+                <th className="px-3 py-2 font-semibold text-start">{t('pp.colQuiz')}</th>
+                <th className="px-3 py-2 font-semibold text-start">{t('pp.colXp')}</th>
+                <th className="px-3 py-2 font-semibold text-start">{t('pp.colStatus')}</th>
+                <th><span className="sr-only">{t('pp.openAria', { title: '' })}</span></th>
               </tr>
             </thead>
             <tbody>
-              {allLessons().map((l) => {
+              {allLessons.map((l) => {
                 const p = state.lessons[l.id]
-                const unit = UNITS.find((u) => u.id === l.unitId)!
+                const unit = units.find((u) => u.id === l.unitId)!
                 return (
                   <tr key={l.id} className="border-t">
                     <td className="px-3 py-2">
@@ -150,11 +156,11 @@ export function ProgressPage() {
                     <td className="px-3 py-2 tabular-nums">{p?.xp ?? 0}/{l.xp}</td>
                     <td className="px-3 py-2">
                       {p?.completed
-                        ? <Badge className="border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"><CheckCircle2 className="mr-1 h-3 w-3" aria-hidden />Mastered</Badge>
-                        : <Badge variant="secondary">In progress</Badge>}
+                        ? <Badge className="border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400"><CheckCircle2 className="me-1 h-3 w-3" aria-hidden />{t('lesson.mastered')}</Badge>
+                        : <Badge variant="secondary">{t('pp.wip')}</Badge>}
                     </td>
-                    <td className="px-3 py-2 text-right">
-                      <Button size="sm" variant="ghost" onClick={() => navigate({ name: 'lesson', id: l.id })} aria-label={`Open ${l.title}`}>
+                    <td className="px-3 py-2 text-end">
+                      <Button size="sm" variant="ghost" onClick={() => navigate({ name: 'lesson', id: l.id })} aria-label={t('pp.openAria', { title: l.title })}>
                         {p?.completed ? <Compass className="h-4 w-4" aria-hidden /> : <Play className="h-4 w-4" aria-hidden />}
                       </Button>
                     </td>

@@ -12,9 +12,10 @@ import { PracticePanel } from '@/components/game/practice-panel'
 import { QuizPanel } from '@/components/game/quiz-panel'
 import { Celebration } from '@/components/game/celebration'
 import { getSim } from '@/components/sims/registry'
-import { getUnit, getLesson, nextLessonAfter } from '@/lib/game/curriculum'
+import { useLesson, useUnit, useLessons, useDifficultyLabel } from '@/lib/game/l10n'
 import { PRACTICE_XP, useGame } from '@/lib/game/progress'
 import { navigate } from '@/lib/game/router'
+import { useI18n } from '@/lib/game/i18n'
 import type { Difficulty } from '@/lib/game/types'
 import {
   BookOpen, FlaskConical, Dumbbell, GraduationCap, ChevronDown, ChevronRight,
@@ -22,9 +23,6 @@ import {
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const DIFF_LABEL: Record<Difficulty, string> = {
-  easy: 'Easy', standard: 'Standard', challenge: 'Challenge',
-}
 const DIFF_CLASS: Record<Difficulty, string> = {
   easy: 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-400',
   standard: 'bg-amber-500/15 text-amber-700 dark:text-amber-400',
@@ -32,7 +30,11 @@ const DIFF_CLASS: Record<Difficulty, string> = {
 }
 
 export function LessonView({ id }: { id: string }) {
-  const lesson = getLesson(id)
+  const { t } = useI18n()
+  const diffLabel = useDifficultyLabel()
+  const allLessons = useLessons()
+  const lesson = useLesson(id)
+  const unit = useUnit(id) // safe before the not-found branch (hooks must be unconditional)
   const [tab, setTab] = useState('learn')
   const [celebrate, setCelebrate] = useState<{ xpGain: number; score: number } | null>(null)
   const [visited, setVisited] = useState<Record<string, boolean>>({})
@@ -46,15 +48,14 @@ export function LessonView({ id }: { id: string }) {
     return (
       <div className="mx-auto max-w-xl py-20 text-center space-y-4">
         <p className="text-4xl" aria-hidden>🧭</p>
-        <h1 className="text-2xl font-bold">Lesson not found</h1>
-        <p className="text-muted-foreground">That link doesn’t match any lesson. Head back to the map and pick a mission!</p>
-        <Button onClick={() => navigate({ name: 'home' })}>Back to world map</Button>
+        <h1 className="text-2xl font-bold">{t('notFound.title')}</h1>
+        <p className="text-muted-foreground">{t('notFound.body')}</p>
+        <Button onClick={() => navigate({ name: 'home' })}>{t('nav.backMap')}</Button>
       </div>
     )
   }
 
-  const unit = getUnit(lesson.unitId)
-  const next = nextLessonAfter(lesson.id)
+  const next = allLessons[allLessons.findIndex((l) => l.id === lesson.id) + 1]
   const quizXpMax = lesson.xp - 30
   const xpEarned = record?.xp ?? 0
 
@@ -73,35 +74,35 @@ export function LessonView({ id }: { id: string }) {
   }
 
   const steps = [
-    { key: 'learn', label: 'Learn', icon: BookOpen, done: !!visited['learn'] },
-    { key: 'sim', label: 'Simulate', icon: FlaskConical, done: !!visited['sim'] },
-    { key: 'practice', label: 'Practice', icon: Dumbbell, done: !!record?.practiceDone },
-    { key: 'quiz', label: 'Quiz', icon: GraduationCap, done: !!record?.completed },
+    { key: 'learn', label: t('steps.learn'), icon: BookOpen, done: !!visited['learn'] },
+    { key: 'sim', label: t('steps.sim'), icon: FlaskConical, done: !!visited['sim'] },
+    { key: 'practice', label: t('steps.practice'), icon: Dumbbell, done: !!record?.practiceDone },
+    { key: 'quiz', label: t('steps.quiz'), icon: GraduationCap, done: !!record?.completed },
   ]
 
   return (
     <div className="mx-auto max-w-4xl space-y-5">
       {/* header */}
       <div className="space-y-3">
-        <Button variant="ghost" size="sm" className="-ml-2" onClick={() => navigate({ name: 'home' })}>
-          <ArrowLeft className="mr-1 h-4 w-4" aria-hidden /> World map
+        <Button variant="ghost" size="sm" className="-ms-2" onClick={() => navigate({ name: 'home' })}>
+          <ArrowLeft className="me-1 h-4 w-4 rtl:rotate-180" aria-hidden /> {t('nav.worldMap')}
         </Button>
         <div className="flex flex-wrap items-center gap-2">
           <Badge variant="outline" className={cn('border-transparent font-semibold', unit.accent)}>
             {unit.title}
           </Badge>
           <Badge variant="outline" className={cn('border-transparent font-semibold', DIFF_CLASS[lesson.difficulty])}>
-            {DIFF_LABEL[lesson.difficulty]}
+            {diffLabel[lesson.difficulty]}
           </Badge>
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-            <Clock className="h-3.5 w-3.5" aria-hidden /> ~{lesson.minutes} min
+            <Clock className="h-3.5 w-3.5" aria-hidden /> {t('lesson.min', { n: lesson.minutes })}
           </span>
           <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
             <Zap className="h-3.5 w-3.5 text-amber-500" aria-hidden /> {xpEarned}/{lesson.xp} XP
           </span>
           {record?.completed && (
             <Badge className="border-transparent bg-emerald-500/15 text-emerald-700 dark:text-emerald-400">
-              <CheckCircle2 className="mr-1 h-3 w-3" aria-hidden /> Mastered
+              <CheckCircle2 className="me-1 h-3 w-3" aria-hidden /> {t('lesson.mastered')}
             </Badge>
           )}
         </div>
@@ -110,7 +111,7 @@ export function LessonView({ id }: { id: string }) {
       </div>
 
       {/* step rail */}
-      <ol className="grid grid-cols-4 gap-2" aria-label="Lesson steps">
+      <ol className="grid grid-cols-4 gap-2" aria-label={t('steps.aria')}>
         {steps.map((s, i) => (
           <li key={s.key}>
             <button
@@ -128,7 +129,7 @@ export function LessonView({ id }: { id: string }) {
                 <s.icon className="h-3.5 w-3.5 shrink-0" aria-hidden />
                 <span className="text-[11px] sm:text-xs font-semibold">{s.label}</span>
               </span>
-              <span className="sr-only">Step {i + 1}</span>
+              <span className="sr-only">{t('step.sr', { n: i + 1 })}</span>
             </button>
           </li>
         ))}
@@ -136,16 +137,16 @@ export function LessonView({ id }: { id: string }) {
 
       <Tabs value={tab} onValueChange={(v) => { setTab(v); markVisited(v) }}>
         <TabsList className="sr-only">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
-          <TabsTrigger value="sim">Simulate</TabsTrigger>
-          <TabsTrigger value="practice">Practice</TabsTrigger>
-          <TabsTrigger value="quiz">Quiz</TabsTrigger>
+          <TabsTrigger value="learn">{t('steps.learn')}</TabsTrigger>
+          <TabsTrigger value="sim">{t('steps.sim')}</TabsTrigger>
+          <TabsTrigger value="practice">{t('steps.practice')}</TabsTrigger>
+          <TabsTrigger value="quiz">{t('steps.quiz')}</TabsTrigger>
         </TabsList>
 
         {/* ── LEARN ── */}
         <TabsContent value="learn" className="mt-0 space-y-4">
           <div className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
-            <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">What you’ll learn</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">{t('lesson.objectives')}</h2>
             <ul className="grid gap-2 sm:grid-cols-3">
               {lesson.objectives.map((o, i) => (
                 <li key={i} className="rounded-lg bg-muted/50 px-3 py-2 text-sm font-medium">
@@ -163,7 +164,7 @@ export function LessonView({ id }: { id: string }) {
 
           <div className="flex justify-end">
             <Button onClick={() => { setTab('sim'); markVisited('sim') }}>
-              Try the simulation <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+              {t('lesson.trySim')} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
             </Button>
           </div>
         </TabsContent>
@@ -173,7 +174,7 @@ export function LessonView({ id }: { id: string }) {
           {createElement(getSim(lesson.simKey), { lessonId: lesson.id })}
           <div className="flex justify-end">
             <Button onClick={() => { setTab('practice'); markVisited('practice') }}>
-              Practice what you saw <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+              {t('lesson.toPractice')} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
             </Button>
           </div>
         </TabsContent>
@@ -191,7 +192,7 @@ export function LessonView({ id }: { id: string }) {
           />
           <div className="flex justify-end">
             <Button variant="secondary" onClick={() => { setTab('quiz'); markVisited('quiz') }}>
-              Take the quiz <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+              {t('lesson.toQuiz')} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
             </Button>
           </div>
         </TabsContent>
@@ -202,11 +203,11 @@ export function LessonView({ id }: { id: string }) {
           {record?.completed && (
             <div className="flex flex-wrap gap-2">
               <Button variant="secondary" onClick={() => navigate({ name: 'home' })}>
-                Back to world map
+                {t('nav.backMap')}
               </Button>
               {next && (
                 <Button onClick={() => navigate({ name: 'lesson', id: next.id })}>
-                  Next: {next.title} <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+                  {t('lesson.next', { title: next.title })} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
                 </Button>
               )}
             </div>
@@ -215,13 +216,13 @@ export function LessonView({ id }: { id: string }) {
       </Tabs>
 
       {/* prev / next */}
-      <div className="flex items-center justify-between border-t pt-4">
+      <div className="flex items-center justify-between border-t pt-4 gap-2">
         <span className="text-xs text-muted-foreground">
-          Lesson {lesson.order} · quiz XP worth up to {quizXpMax} · practice gives {PRACTICE_XP}
+          {t('lesson.footer', { n: lesson.order, q: quizXpMax, p: PRACTICE_XP })}
         </span>
         {next && (
-          <Button variant="ghost" size="sm" onClick={() => navigate({ name: 'lesson', id: next.id })}>
-            Skip to {next.title} <ChevronRight className="ml-1 h-4 w-4" aria-hidden />
+          <Button variant="ghost" size="sm" className="shrink-0" onClick={() => navigate({ name: 'lesson', id: next.id })}>
+            {t('lesson.skip', { title: next.title })} <ChevronRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
           </Button>
         )}
       </div>
@@ -238,16 +239,17 @@ export function LessonView({ id }: { id: string }) {
   )
 }
 
-function WorkedExampleCard({ lesson }: { lesson: NonNullable<ReturnType<typeof getLesson>> }) {
+function WorkedExampleCard({ lesson }: { lesson: NonNullable<ReturnType<typeof useLesson>> }) {
+  const { t } = useI18n()
   const we = lesson.workedExample
   const [open, setOpen] = useState(false)
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="rounded-xl border bg-card overflow-hidden">
-      <CollapsibleTrigger className="flex w-full items-center justify-between px-4 py-3 text-left hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <CollapsibleTrigger className="flex w-full items-center justify-between gap-2 px-4 py-3 text-start hover:bg-muted/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <span className="flex items-center gap-2 text-sm font-bold">
-          <Play className="h-4 w-4 text-primary" aria-hidden /> Worked example: {we.title}
+          <Play className="h-4 w-4 text-primary shrink-0" aria-hidden /> {t('lesson.worked', { title: we.title })}
         </span>
-        <ChevronDown className={cn('h-4 w-4 transition-transform', open && 'rotate-180')} aria-hidden />
+        <ChevronDown className={cn('h-4 w-4 shrink-0 transition-transform', open && 'rotate-180')} aria-hidden />
       </CollapsibleTrigger>
       <CollapsibleContent>
         <div className="border-t px-4 py-4 space-y-3">
@@ -255,7 +257,7 @@ function WorkedExampleCard({ lesson }: { lesson: NonNullable<ReturnType<typeof g
           <ol className="space-y-2.5">
             {we.steps.map((s, i) => (
               <li key={i} className="rounded-lg bg-muted/40 px-3 py-2.5 text-sm leading-relaxed">
-                <span className="mr-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
+                <span className="me-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[11px] font-bold text-primary-foreground">
                   {i + 1}
                 </span>
                 {s.text}
@@ -263,7 +265,7 @@ function WorkedExampleCard({ lesson }: { lesson: NonNullable<ReturnType<typeof g
               </li>
             ))}
           </ol>
-          <div className="rounded-lg border-l-4 border-emerald-500 bg-emerald-500/10 px-3 py-2.5 text-sm font-medium">
+          <div className="rounded-lg border-s-4 border-emerald-500 bg-emerald-500/10 px-3 py-2.5 text-sm font-medium">
             <RichText text={we.answer} />
           </div>
         </div>

@@ -4,6 +4,7 @@
 import {
   useEffect, useRef, useState,
   type ReactNode, type RefObject,
+  Fragment, isValidElement, cloneElement,
 } from 'react'
 import { Slider } from '@/components/ui/slider'
 import { Switch } from '@/components/ui/switch'
@@ -13,6 +14,7 @@ import {
 } from '@/components/ui/select'
 import { cn } from '@/lib/utils'
 import { useGame } from '@/lib/game/progress'
+import { useI18n } from '@/lib/game/i18n'
 
 // ─── Canvas palette (fixed "night lab" look in both themes) ──────────────────
 export const CANVAS = {
@@ -154,12 +156,13 @@ export function useSimBeep() {
 export function SimFrame({
   title, brief, children, className,
 }: { title?: string; brief?: string; children: ReactNode; className?: string }) {
+  const { simT } = useI18n()
   return (
     <div className={cn('rounded-xl border bg-card overflow-hidden', className)}>
       {(title || brief) && (
         <div className="border-b bg-muted/40 px-4 py-3">
-          {title && <p className="font-semibold text-sm">{title}</p>}
-          {brief && <p className="text-xs text-muted-foreground mt-0.5">{brief}</p>}
+          {title && <p className="font-semibold text-sm">{simT(title)}</p>}
+          {brief && <p className="text-xs text-muted-foreground mt-0.5">{simT(brief)}</p>}
         </div>
       )}
       <div className="p-3 sm:p-4 space-y-3">{children}</div>
@@ -182,16 +185,18 @@ export function SimSlider({
   disabled?: boolean
   className?: string
 }) {
+  const { simT } = useI18n()
+  const translated = simT(label)
   return (
     <div className={cn('min-w-[150px] flex-1', className)}>
       <div className="flex items-baseline justify-between mb-1.5">
-        <span className="text-xs font-medium text-muted-foreground">{label}</span>
+        <span className="text-xs font-medium text-muted-foreground">{translated}</span>
         <span className="text-xs font-mono font-semibold tabular-nums">
           {format ? format(value) : value}{unit ? `\u2009${unit}` : ''}
         </span>
       </div>
       <Slider
-        aria-label={label}
+        aria-label={translated}
         value={[value]}
         min={min}
         max={max}
@@ -201,6 +206,26 @@ export function SimSlider({
       />
     </div>
   )
+}
+
+/** Deeply translate every plain-text node inside arbitrary children (icons stay untouched). */
+function translateChildren(children: ReactNode, fn: (s: string) => string): ReactNode {
+  if (typeof children === 'string') {
+    const trimmed = children.trim()
+    if (!trimmed) return children
+    return children.replace(trimmed, fn(trimmed))
+  }
+  if (typeof children === 'number') return children
+  if (Array.isArray(children)) {
+    return children.map((child, i) => <Fragment key={i}>{translateChildren(child, fn)}</Fragment>)
+  }
+  if (isValidElement(children)) {
+    const props = children.props as { children?: ReactNode }
+    if (props.children !== undefined) {
+      return cloneElement(children, undefined, translateChildren(props.children, fn))
+    }
+  }
+  return children
 }
 
 export function SimButton({
@@ -213,9 +238,10 @@ export function SimButton({
   disabled?: boolean
   title?: string
 }) {
+  const { simT } = useI18n()
   return (
     <Button size="sm" variant={variant} onClick={onClick} disabled={disabled} title={title} className={className}>
-      {children}
+      {translateChildren(children, simT)}
     </Button>
   )
 }
@@ -223,10 +249,12 @@ export function SimButton({
 export function SimToggle({
   label, checked, onChange, className,
 }: { label: string; checked: boolean; onChange: (v: boolean) => void; className?: string }) {
+  const { simT } = useI18n()
+  const translated = simT(label)
   return (
     <label className={cn('flex items-center gap-2 text-xs font-medium text-muted-foreground cursor-pointer select-none', className)}>
-      <Switch aria-label={label} checked={checked} onCheckedChange={onChange} />
-      {label}
+      <Switch aria-label={translated} checked={checked} onCheckedChange={onChange} />
+      {translated}
     </label>
   )
 }
@@ -240,16 +268,18 @@ export function SimSelect<T extends string>({
   onChange: (v: T) => void
   className?: string
 }) {
+  const { simT } = useI18n()
+  const translated = simT(label)
   return (
     <div className={cn('min-w-[130px]', className)}>
-      {label && <p className="text-xs font-medium text-muted-foreground mb-1.5">{label}</p>}
+      {label && <p className="text-xs font-medium text-muted-foreground mb-1.5">{translated}</p>}
       <Select value={value} onValueChange={(v) => onChange(v as T)}>
-        <SelectTrigger size="sm" aria-label={label} className="w-full">
+        <SelectTrigger size="sm" aria-label={translated} className="w-full">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
           {options.map((o) => (
-            <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
+            <SelectItem key={o.value} value={o.value}>{simT(o.label)}</SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -260,9 +290,10 @@ export function SimSelect<T extends string>({
 export function Readout({
   label, value, unit, tone,
 }: { label: string; value: string; unit?: string; tone?: string }) {
+  const { simT } = useI18n()
   return (
     <div className="rounded-lg border bg-muted/40 px-2.5 py-1.5 min-w-[86px]">
-      <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-none">{label}</p>
+      <p className="text-[10px] uppercase tracking-wide text-muted-foreground leading-none">{simT(label)}</p>
       <p className={cn('text-sm font-mono font-semibold tabular-nums mt-0.5', tone)}>
         {value}{unit ? <span className="text-muted-foreground font-normal">{'\u2009'}{unit}</span> : null}
       </p>
@@ -271,10 +302,11 @@ export function Readout({
 }
 
 export function Legend({ color, label }: { color: string; label: string }) {
+  const { simT } = useI18n()
   return (
     <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground">
       <span className="inline-block h-2.5 w-2.5 rounded-full" style={{ background: color }} aria-hidden />
-      {label}
+      {simT(label)}
     </span>
   )
 }

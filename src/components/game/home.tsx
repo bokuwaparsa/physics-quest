@@ -7,9 +7,11 @@ import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
 import { Progress } from '@/components/ui/progress'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { UNITS, allLessons, levelFor, rankFor, xpIntoLevel } from '@/lib/game/curriculum'
+import { levelFor, xpIntoLevel } from '@/lib/game/curriculum'
+import { useLessons, useUnits, useDifficultyLabel, useRankFor } from '@/lib/game/l10n'
 import { useGame } from '@/lib/game/progress'
 import { navigate } from '@/lib/game/router'
+import { useI18n } from '@/lib/game/i18n'
 import { RichText } from '@/components/game/tex'
 import type { Lesson, UnitId } from '@/lib/game/types'
 import {
@@ -29,34 +31,38 @@ const DIFF_DOT: Record<Lesson['difficulty'], string> = {
 }
 
 export function Home() {
-  const lessons = useGame((s) => s.lessons)
+  const { t } = useI18n()
+  const diffLabel = useDifficultyLabel()
+  const lessonsState = useGame((s) => s.lessons)
   const xp = useGame((s) => s.xp)
   const streak = useGame((s) => s.streak)
+  const rank = useRankFor(xp)
+  const allLessons = useLessons()
+  const units = useUnits()
 
   const [query, setQuery] = useState('')
   const [unitFilter, setUnitFilter] = useState<UnitId | 'all'>('all')
   const [diffFilter, setDiffFilter] = useState<Lesson['difficulty'] | 'all'>('all')
 
   const masteredCount = useMemo(
-    () => Object.values(lessons).filter((l) => l.completed).length,
-    [lessons],
+    () => Object.values(lessonsState).filter((l) => l.completed).length,
+    [lessonsState],
   )
-  const total = allLessons().length
+  const total = allLessons.length
 
   const continueLesson = useMemo(() => {
-    const list = allLessons()
-    return list.find((l) => !lessons[l.id]?.completed) ?? list[0]
-  }, [lessons])
+    return allLessons.find((l) => !lessonsState[l.id]?.completed) ?? allLessons[0]
+  }, [lessonsState, allLessons])
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    return allLessons().filter((l) => {
+    return allLessons.filter((l) => {
       if (unitFilter !== 'all' && l.unitId !== unitFilter) return false
       if (diffFilter !== 'all' && l.difficulty !== diffFilter) return false
       if (!q) return true
       return [l.title, l.tagline, ...l.objectives].join(' ').toLowerCase().includes(q)
     })
-  }, [query, unitFilter, diffFilter])
+  }, [query, unitFilter, diffFilter, allLessons])
 
   const searching = query.trim() !== '' || unitFilter !== 'all' || diffFilter !== 'all'
 
@@ -66,25 +72,25 @@ export function Home() {
       <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-amber-500/10 via-transparent to-emerald-500/10 px-5 py-8 sm:px-8 sm:py-12">
         <div className="relative z-10 max-w-2xl space-y-4">
           <Badge variant="outline" className="border-amber-500/40 text-amber-700 dark:text-amber-400">
-            Free · Open · No account needed
+            {t('hero.badge')}
           </Badge>
           <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
             Physics Quest
           </h1>
           <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-            Learn physics by playing: {total} interactive lessons across 7 worlds — with live
-            simulations, guided practice, quizzes and badges. Original curriculum for
-            middle school &amp; early high school.
+            {t('hero.sub', { n: total })}
           </p>
           <div className="flex flex-wrap gap-2 pt-1">
             {continueLesson && (
               <Button size="lg" onClick={() => navigate({ name: 'lesson', id: continueLesson.id })}>
-                <Play className="mr-1.5 h-4 w-4" aria-hidden />
-                {masteredCount === 0 ? 'Start your quest' : 'Continue'}: {continueLesson.title}
+                <Play className="me-1.5 h-4 w-4" aria-hidden />
+                {masteredCount === 0
+                  ? t('hero.startWith', { title: continueLesson.title })
+                  : t('hero.continueWith', { title: continueLesson.title })}
               </Button>
             )}
             <Button size="lg" variant="secondary" onClick={() => navigate({ name: 'playground' })}>
-              <Compass className="mr-1.5 h-4 w-4" aria-hidden /> Physics Playground
+              <Compass className="me-1.5 h-4 w-4" aria-hidden /> {t('nav.playground')}
             </Button>
           </div>
         </div>
@@ -94,45 +100,45 @@ export function Home() {
       </section>
 
       {/* stats */}
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Your progress">
-        <StatCard icon={XpIcon} label="Total XP" value={`${xp}`} sub={`${xpIntoLevel(xp)}/300 to next level`} />
-        <StatCard icon={Trophy} label="Level" value={`${levelFor(xp)}`} sub={rankFor(xp)} />
-        <StatCard icon={BookOpenCheck} label="Mastered" value={`${masteredCount}/${total}`} sub="lessons complete" />
-        <StatCard icon={Flame} label="Streak" value={`${streak}`} sub={streak === 1 ? 'day in a row' : 'days in a row'} />
+      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label={t('stats.aria')}>
+        <StatCard icon={XpIcon} label={t('stats.xp')} value={`${xp}`} sub={t('stats.toNext', { n: xpIntoLevel(xp) })} />
+        <StatCard icon={Trophy} label={t('stats.level')} value={`${levelFor(xp)}`} sub={rank} />
+        <StatCard icon={BookOpenCheck} label={t('stats.mastered')} value={`${masteredCount}/${total}`} sub={t('stats.masteredSub')} />
+        <StatCard icon={Flame} label={t('stats.streak')} value={`${streak}`} sub={streak === 1 ? t('stats.streakDay') : t('stats.streakDays')} />
       </section>
 
       {/* search + filters */}
-      <section className="space-y-3" aria-label="Search lessons">
+      <section className="space-y-3" aria-label={t('aria.search')}>
         <div className="flex flex-col gap-3 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
+            <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search lessons: gravity, circuits, waves…"
-              aria-label="Search lessons"
-              className="pl-9"
+              placeholder={t('search.placeholder')}
+              aria-label={t('aria.search')}
+              className="ps-9"
             />
           </div>
           <div className="flex gap-2">
             <Select value={unitFilter} onValueChange={(v) => setUnitFilter(v as UnitId | 'all')}>
-              <SelectTrigger className="w-[170px]" aria-label="Filter by world">
+              <SelectTrigger className="w-[170px]" aria-label={t('aria.filterWorld')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All worlds</SelectItem>
-                {UNITS.map((u) => <SelectItem key={u.id} value={u.id}>{u.title}</SelectItem>)}
+                <SelectItem value="all">{t('filter.world')}</SelectItem>
+                {units.map((u) => <SelectItem key={u.id} value={u.id}>{u.title}</SelectItem>)}
               </SelectContent>
             </Select>
             <Select value={diffFilter} onValueChange={(v) => setDiffFilter(v as Lesson['difficulty'] | 'all')}>
-              <SelectTrigger className="w-[130px]" aria-label="Filter by difficulty">
+              <SelectTrigger className="w-[130px]" aria-label={t('aria.filterDiff')}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Any level</SelectItem>
-                <SelectItem value="easy">Easy</SelectItem>
-                <SelectItem value="standard">Standard</SelectItem>
-                <SelectItem value="challenge">Challenge</SelectItem>
+                <SelectItem value="all">{t('filter.any')}</SelectItem>
+                <SelectItem value="easy">{t('diff.easy')}</SelectItem>
+                <SelectItem value="standard">{t('diff.standard')}</SelectItem>
+                <SelectItem value="challenge">{t('diff.challenge')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -141,17 +147,17 @@ export function Home() {
 
       {/* search results */}
       {searching && (
-        <section aria-label="Search results" className="space-y-3">
+        <section aria-label={t('results.aria')} className="space-y-3">
           <h2 className="text-lg font-bold">
-            {filtered.length} lesson{filtered.length === 1 ? '' : 's'} found
+            {filtered.length === 1 ? t('results.one') : t('results.many', { n: filtered.length })}
           </h2>
           {filtered.length === 0 ? (
             <p className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-              Nothing matched. Try “energy”, “light”, “momentum”…
+              {t('results.none')}
             </p>
           ) : (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {filtered.map((l) => <LessonChip key={l.id} lesson={l} done={!!lessons[l.id]?.completed} />)}
+              {filtered.map((l) => <LessonChip key={l.id} lesson={l} done={!!lessonsState[l.id]?.completed} />)}
             </div>
           )}
         </section>
@@ -159,13 +165,13 @@ export function Home() {
 
       {/* world map */}
       {!searching && (
-        <section aria-label="World map" className="space-y-5">
-          <h2 className="text-xl font-bold">Choose your world</h2>
+        <section aria-label={t('map.aria')} className="space-y-5">
+          <h2 className="text-xl font-bold">{t('map.title')}</h2>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {UNITS.map((u) => {
+            {units.map((u) => {
               const Icon = UNIT_ICONS[u.id]
-              const uLessons = u.lessonIds.map((id) => allLessons().find((l) => l.id === id)!).filter(Boolean)
-              const done = uLessons.filter((l) => lessons[l.id]?.completed).length
+              const uLessons = u.lessonIds.map((id) => allLessons.find((l) => l.id === id)!).filter(Boolean)
+              const done = uLessons.filter((l) => lessonsState[l.id]?.completed).length
               return (
                 <div key={u.id} className="rounded-xl border bg-card overflow-hidden flex flex-col">
                   <div className="flex items-start gap-3 border-b bg-muted/30 px-4 py-3">
@@ -182,16 +188,16 @@ export function Home() {
                     <Badge variant="secondary" className="shrink-0 tabular-nums">{done}/{uLessons.length}</Badge>
                   </div>
                   <div className="px-4 py-3">
-                    <Progress value={(done / Math.max(1, uLessons.length)) * 100} aria-label={`${u.title} progress`} className="h-1.5" />
+                    <Progress value={(done / Math.max(1, uLessons.length)) * 100} aria-label={t('unit.progressAria', { unit: u.title })} className="h-1.5" />
                   </div>
                   <ul className="flex-1 space-y-1 px-2 pb-3">
                     {uLessons.map((l, i) => {
-                      const isDone = !!lessons[l.id]?.completed
+                      const isDone = !!lessonsState[l.id]?.completed
                       return (
                         <li key={l.id}>
                           <button
                             onClick={() => navigate({ name: 'lesson', id: l.id })}
-                            className="group flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-left hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className="group flex w-full items-center gap-2.5 rounded-lg px-2 py-2 text-start hover:bg-muted/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           >
                             <span
                               className={cn(
@@ -209,7 +215,7 @@ export function Home() {
                               </span>
                               <span className="block truncate text-xs text-muted-foreground"><RichText text={l.tagline} /></span>
                             </span>
-                            <span className={cn('h-2 w-2 shrink-0 rounded-full', DIFF_DOT[l.difficulty])} title={l.difficulty} aria-label={`difficulty: ${l.difficulty}`} />
+                            <span className={cn('h-2 w-2 shrink-0 rounded-full', DIFF_DOT[l.difficulty])} title={diffLabel[l.difficulty]} aria-label={t('diff.title', { d: diffLabel[l.difficulty] })} />
                           </button>
                         </li>
                       )
@@ -224,14 +230,14 @@ export function Home() {
 
       {/* how to play */}
       {!searching && (
-        <section aria-label="How to play" className="rounded-xl border bg-muted/30 px-5 py-6">
-          <h2 className="text-lg font-bold">How every lesson works</h2>
+        <section aria-label={t('how.aria')} className="rounded-xl border bg-muted/30 px-5 py-6">
+          <h2 className="text-lg font-bold">{t('how.title')}</h2>
           <ol className="mt-3 grid gap-3 sm:grid-cols-4">
             {[
-              { n: 1, t: 'Learn', d: 'A short, friendly explanation with real formulas (KaTeX-rendered).' },
-              { n: 2, t: 'Simulate', d: 'Play with a live simulation — tweak, predict, observe.' },
-              { n: 3, t: 'Practice', d: 'Guided questions with hints and instant feedback.' },
-              { n: 4, t: 'Quiz', d: 'Score 70%+ to master the lesson and earn its badge + XP.' },
+              { n: 1, t: t('steps.learn'), d: t('how.1d') },
+              { n: 2, t: t('steps.sim'), d: t('how.2d') },
+              { n: 3, t: t('steps.practice'), d: t('how.3d') },
+              { n: 4, t: t('steps.quiz'), d: t('how.4d') },
             ].map((s) => (
               <li key={s.n} className="rounded-lg border bg-card px-3 py-3">
                 <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground" aria-hidden>{s.n}</span>
@@ -241,8 +247,8 @@ export function Home() {
             ))}
           </ol>
           <p className="mt-4 text-xs text-muted-foreground">
-            Progress is saved automatically in your browser (localStorage) — no account, no tracking.
-            You can reset it anytime from <Button variant="link" className="h-auto p-0 text-xs underline" onClick={() => navigate({ name: 'progress' })}>My Progress</Button>.
+            {t('how.note')}{' '}
+            <Button variant="link" className="h-auto p-0 text-xs underline" onClick={() => navigate({ name: 'progress' })}>{t('nav.progress')}</Button>.
           </p>
         </section>
       )}
@@ -265,21 +271,24 @@ function StatCard({
 }
 
 function LessonChip({ lesson, done }: { lesson: Lesson; done: boolean }) {
-  const unit = UNITS.find((u) => u.id === lesson.unitId)!
+  const { t } = useI18n()
+  const diffLabel = useDifficultyLabel()
+  const units = useUnits()
+  const unit = units.find((u) => u.id === lesson.unitId) ?? units[0]
   const Icon = UNIT_ICONS[unit.id]
   return (
     <button
       onClick={() => navigate({ name: 'lesson', id: lesson.id })}
-      className="group flex items-start gap-3 rounded-xl border bg-card px-4 py-3 text-left transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+      className="group flex items-start gap-3 rounded-xl border bg-card px-4 py-3 text-start transition-colors hover:border-primary/50 hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
     >
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white" style={{ background: unit.hex }}>
         <Icon className="h-4 w-4" aria-hidden />
       </span>
       <span className="min-w-0">
         <span className="block text-sm font-semibold group-hover:underline underline-offset-2">{lesson.title}</span>
-        <span className="block truncate text-xs text-muted-foreground">{unit.title} · {lesson.difficulty} · {lesson.minutes} min</span>
+        <span className="block truncate text-xs text-muted-foreground">{unit.title} · {diffLabel[lesson.difficulty]} · {t('lesson.min', { n: lesson.minutes })}</span>
       </span>
-      {done && <span className="ml-auto text-emerald-500" aria-label="mastered">✓</span>}
+      {done && <span className="ms-auto text-emerald-500" aria-label={t('aria.mastered')}>✓</span>}
     </button>
   )
 }

@@ -8,12 +8,14 @@ import type { Lesson, Question } from '@/lib/game/types'
 import { PRACTICE_XP, useGame } from '@/lib/game/progress'
 import { Explanation, XpChip } from '@/components/game/celebration'
 import { RichText } from '@/components/game/tex'
+import { useI18n } from '@/lib/game/i18n'
 import { Lightbulb, Check, ArrowRight, RotateCcw } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 type Status = 'asking' | 'correct' | 'retry'
 
 export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp: number) => void }) {
+  const { t } = useI18n()
   const [idx, setIdx] = useState(0)
   const [status, setStatus] = useState<Status>('asking')
   const [hintsShown, setHintsShown] = useState(0)
@@ -31,7 +33,7 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
     if (!q) return
     if (q.kind === 'mc') {
       if (choice === q.answerIndex) setStatus('correct')
-      else { setStatus('retry'); setTries((t) => t + 1) }
+      else { setStatus('retry'); setTries((tr) => tr + 1) }
     } else {
       const val = parseFloat(input.replace(',', '.'))
       const tol = (q.tolerance ?? 0.02) * Math.abs(q.answer ?? 0)
@@ -39,7 +41,7 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
         setStatus('correct')
       } else {
         setStatus('retry')
-        setTries((t) => t + 1)
+        setTries((tr) => tr + 1)
       }
     }
   }
@@ -59,14 +61,14 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
     return (
       <div className="rounded-xl border bg-card p-6 text-center space-y-3">
         <p className="text-3xl" aria-hidden>🎯</p>
-        <h3 className="text-lg font-bold">Guided practice complete!</h3>
+        <h3 className="text-lg font-bold">{t('practice.doneTitle')}</h3>
         <p className="text-sm text-muted-foreground">
-          You worked through every question with hints and instant feedback.
+          {t('practice.doneBody')}
         </p>
         <XpChip xp={PRACTICE_XP} />
         <div>
           <Button onClick={() => setAllDone(false)} variant="secondary">
-            <RotateCcw className="mr-1 h-4 w-4" aria-hidden /> Practice again
+            <RotateCcw className="me-1 h-4 w-4" aria-hidden /> {t('practice.again')}
           </Button>
         </div>
       </div>
@@ -77,9 +79,9 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
 
   return (
     <div className="rounded-xl border bg-card p-4 sm:p-6 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-          Guided practice · Question {idx + 1} of {lesson.practice.length}
+          {t('practice.head', { i: idx + 1, n: lesson.practice.length })}
         </p>
         <div className="flex gap-1" aria-hidden>
           {lesson.practice.map((_, i) => (
@@ -91,7 +93,7 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
       <p className="text-base font-medium leading-relaxed"><RichText text={q.prompt} /></p>
 
       {q.kind === 'mc' ? (
-        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label="Answer choices">
+        <div className="grid gap-2 sm:grid-cols-2" role="radiogroup" aria-label={t('aria.choices')}>
           {q.choices?.map((c, i) => {
             const isPicked = choice === i
             const reveal = status !== 'asking'
@@ -104,7 +106,7 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
                 disabled={status === 'correct'}
                 onClick={() => { setChoice(i); setStatus('asking') }}
                 className={cn(
-                  'rounded-lg border px-4 py-3 text-left text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+                  'rounded-lg border px-4 py-3 text-start text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   reveal && isRight && 'border-emerald-500 bg-emerald-500/10',
                   reveal && isPicked && !isRight && 'border-rose-500 bg-rose-500/10',
                   !reveal && isPicked && 'border-primary bg-primary/10',
@@ -120,7 +122,7 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
       ) : (
         <div className="flex items-center gap-2 max-w-xs">
           <Input
-            aria-label="Your answer"
+            aria-label={t('aria.answer')}
             inputMode="decimal"
             value={input}
             placeholder="?"
@@ -137,8 +139,8 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
       {hintsShown < q.hints.length && status !== 'correct' && (
         <div>
           <Button variant="ghost" size="sm" onClick={() => setHintsShown((h) => h + 1)}>
-            <Lightbulb className="mr-1 h-4 w-4 text-amber-500" aria-hidden />
-            Show hint ({hintsShown + 1}/{q.hints.length})
+            <Lightbulb className="me-1 h-4 w-4 text-amber-500" aria-hidden />
+            {t('practice.hint', { i: hintsShown + 1, n: q.hints.length })}
           </Button>
           {q.hints.slice(0, hintsShown).map((h, i) => (
             <p key={i} className="mt-2 rounded-lg bg-amber-500/10 px-3 py-2 text-sm text-amber-800 dark:text-amber-300">
@@ -152,8 +154,8 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
         <Explanation
           correct={false}
           text={tries >= 2
-            ? `Not quite — no worries! ${q.explanation} Try again or move on — mistakes are how physics sticks.`
-            : 'Not quite — try again, or reveal a hint above.'}
+            ? t('practice.retry2', { why: q.explanation })
+            : t('practice.retry1')}
         />
       )}
       {status === 'correct' && <Explanation correct text={q.explanation} />}
@@ -161,17 +163,17 @@ export function PracticePanel({ lesson, onDone }: { lesson: Lesson; onDone: (xp:
       <div className="flex flex-wrap gap-2">
         {status !== 'correct' && (
           <Button onClick={check} disabled={q.kind === 'numeric' ? !input : choice === null}>
-            <Check className="mr-1 h-4 w-4" aria-hidden /> Check answer
+            <Check className="me-1 h-4 w-4" aria-hidden /> {t('practice.check')}
           </Button>
         )}
         {status === 'correct' && (
           <Button onClick={nextQ}>
-            {idx + 1 >= lesson.practice.length ? 'Finish practice' : 'Next question'} <ArrowRight className="ml-1 h-4 w-4" aria-hidden />
+            {idx + 1 >= lesson.practice.length ? t('practice.finish') : t('practice.nextQ')} <ArrowRight className="ms-1 h-4 w-4 rtl:rotate-180" aria-hidden />
           </Button>
         )}
         {status === 'retry' && tries >= 2 && (
           <Button variant="ghost" onClick={() => { setStatus('correct') }}>
-            Show me the solution
+            {t('practice.reveal')}
           </Button>
         )}
       </div>

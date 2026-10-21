@@ -168,3 +168,192 @@ Work Log:
 
 Stage Summary:
 - Physics Quest complete: 30 lessons / 30 sims / 7 worlds, all playable, no gating, no placeholders. Ready to preview.
+---
+Task ID: 10-2
+Agent: translator fa+tr (part-02)
+Task: Translate lessons m4, m5, m6 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n/schema.ts, game/types.ts and translate.ts (merge semantics: overlay concept must match base length/type/order, questions keyed by exact base ids).
+- Extracted base lessons: m4-newtons-second-law + m5-newtons-third-law (lessons-mech-a.ts) and m6-projectiles (lessons-mech-b.ts); noted exact question ids ('m4-newtons-second-law-p1…q5', 'm5-newtons-third-law-p1…q4', 'm6-p1…q5').
+- Wrote complete overlays in src/data/i18n/fa/part-02.ts and src/data/i18n/tr/part-02.ts: title, tagline, 3 objectives, all 9 concept blocks each (same t/order; formula captions translated; table headers/rows translated with numbers+units Latin), worked example (text-only steps, no tex), and EVERY practice+quiz question (prompt, all 4 choices in order, both hints, explanation).
+- All LaTeX copied byte-for-byte; $-parity even in every string; Western digits; units Latin (m/s, N, kg, m/s²); **bold** markers wrap corresponding translated words; fa uses «» quotes and ؟, tr uses proper ş/ğ/İ/ı with ’ for suffix apostrophes.
+- Validation: (1) `bunx tsc --noEmit | grep i18n/(fa|tr)/part-02` → empty. (2) bun check script: imported both overlay files + both base data files; verified per lesson per locale: concept length/type/order match, table header/row dims, example steps count, every base question id covered with no unknown keys, choices/hints counts equal, every string non-empty with even $ count, and every $…$ segment byte-identical to the base segment (caught and fixed 2 Turkish sentences where translation reordered "$50 N"/"$2 kg"; reordered the sentences to preserve math order) → ALL CHECKS PASSED.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-02.ts, src/data/i18n/tr/part-02.ts
+- Lessons fully covered: m4-newtons-second-law, m5-newtons-third-law, m6-projectiles × 2 locales
+- Glossary notes: mandatory glossary applied (نیرو/kuvvet, جرم/kütle, شتاب/ivme, گرانش/yer çekimi, وزن/ağırlık, پرتابه/mermi, برد/menzil, نیروی خالص/net kuvvet, اصطکاک/sürtünme). Coined beyond glossary: thrust=رانش (fa) / itki (tr); inertia=لختی (fa) / atalet (tr); (motion) component=مؤلفه (fa) / bileşen (tr); exhaust gas=گاز خروجی (fa) / egzoz gazı (tr); frictionless=بی‌اصطکاک (fa) / sürtünmesiz (tr); hover=معلق ماندن (fa) / havada asılı kalmak (tr); arc=قوس (fa) / yay (tr); action–reaction=کنش–واکنش (fa) / etki–tepki (tr); trolley=چرخ خرید (fa) / market arabası (tr).
+---
+Task ID: 10-1
+Agent: translator fa+tr (part-01)
+Task: Translate lessons m1, m2, m3 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n/schema.ts, lib/game/types.ts, then extracted the full base content of m1-motion-graphs (lessons-mech.ts) and m2-acceleration + m3-forces-balanced (lessons-mech-a.ts).
+- Wrote src/data/i18n/fa/part-01.ts and src/data/i18n/tr/part-01.ts as full LessonOvFile overlays: title, tagline, objectives, concept (same block count/type/order: m1=10 blocks, m2=9, m3=9; formula captions translated, tex not duplicated), worked example (title/problem/steps text/answer; tex omitted), and EVERY practice + quiz question keyed by exact base ids (m1: p1,p2,q1–q5; m2-acceleration: p1,p2,q1–q4; m3-forces-balanced: p1,p2,q1–q4) with prompt, all choices (order preserved, answerIndex untouched), all hints, explanation.
+- All $…$ LaTeX copied byte-for-byte; validated programmatically that every inline math token in each overlay string equals the corresponding base token in order (strictest check: per-string token-by-token comparison, not just counts), plus even-$ parity on every string, table row/column shapes, and no Eastern digits/placeholders.
+- Tricky terminology: fa speed/velocity kept strictly as تندی/سرعت (e.g. m1-q5 contrasts «سرعت» vs «تندی»); fa "deceleration" coined as کندشوندی alongside شتاب منفی; fa m2 table "pedal down" rendered idiomatically as پدال تا ته. tr velocity rendered with the mandated phrase "hız (yön ile)" wherever the base contrasts velocity vs speed, while velocity–time graphs use the standard Turkish "hız–zaman grafiği"; tr "deceleration" = yavaşlama ivmesi; avoided Turkish suffixes glued to closing $ (e.g. no "$10 kg$'lık") to keep math islands clean; arrows in fa RTL hint rewritten with "یعنی" instead of → to avoid bidi confusion.
+- Persian quotes use «», Turkish uses “”; Western digits everywhere; unit symbols (m/s, m/s², N, kg) kept Latin in both locales.
+- Validation: bunx tsc --noEmit grep for i18n/(fa|tr)/part-01 → empty; bun run lint grep → empty; custom bun validator imported base lessons + both overlays and verified: lesson ids present, concept block length/type/order, question-id coverage (no missing/extra), choices/hints/steps counts, per-string math-token equality, $-parity, no tex keys in overlay steps → ALL CHECKS PASSED (temp validator deleted afterwards; no project files touched besides the two part files and this worklog).
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-01.ts, src/data/i18n/tr/part-01.ts
+- Lessons fully covered: m1-motion-graphs, m2-acceleration, m3-forces-balanced × 2 locales
+- Glossary notes: followed mandatory glossary exactly (fa: تندی/سرعت/شتاب/نیرو/جرم/نیروی خالص/شیب/نمودار مسافت–زمان/نمودار نیرو/یکای SI; tr: hız/hız (yön ile)/ivme/kuvvet/kütle/net kuvvet/eğim/konum–zaman grafiği/seri cisim diyagramı/SI birimi). Coined beyond glossary: fa کندشوندی = deceleration, نیروی برآیند = resultant force, نیروی عمودی سطح = normal force, کارتینگ = go-kart, چرخ‌دستی = cart, پیکان = arrow (force vector); tr yavaşlama ivmesi = deceleration, bileşke kuvvet = resultant force, normal kuvvet = normal force, arabacık = cart, gokart = go-kart.
+
+---
+Task ID: 10-3
+Agent: translator fa+tr (part-03)
+Task: Translate lessons m7, m8, m9 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n/schema.ts, lib/game/types.ts and extracted lessons m7-energy, m8-momentum, m9-circular-motion from src/data/lessons-mech-b.ts (7 concept blocks for m8/m9, 10 for m7; 2 practice + 5 quiz questions each).
+- Replaced stubs entirely: src/data/i18n/fa/part-03.ts and src/data/i18n/tr/part-03.ts with full overlays (title, tagline, 3 objectives, all concept blocks in base order/types, worked example with text-only steps, every question keyed by exact base id).
+- Verified with a bun QA script (/tmp/validate-103.ts): $-parity on every string; per-lesson concept length + block-type alignment vs base; byte-for-byte math-segment fidelity (same segments, same order) for every text field, caption, list item, choice, hint; question id coverage with no extras; choices/hints/steps/objectives counts. 3 initial Turkish math-order mismatches (m9 example problem, m9-p1, m9-q2 prompts) fixed by rephrasing sentences to keep the base segment order — final run: ALL CHECKS PASSED.
+- `bunx tsc --noEmit | grep "i18n/(fa|tr)/part-03"` → empty.
+- Tricky terminology: fa impulse = ضربه (momentum already = تکانه), inertia = اینرسی, tangent = مماس, period = دوره; tr impulse = impuls, inertia = eylemsizlik, centrifugal = merkezkaç (vs glossary centripetal = merkezcil), tangent = teğet, period = periyot. Kept **bold** markers on translated words; dropped the base's stray single-asterisk "italics" (RichText only supports **bold**; asterisks would render literally). Kept unit symbols Latin (m/s, m/s², kg·m/s, J, N, W); spelled unit names in prose. Used Western digits; "10,000 J" (fa) and "10 000 J" (tr, space separator to avoid clash with decimal-point convention used in answers); decimal points kept as "." in both locales to match the numeric answer input.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-03.ts, src/data/i18n/tr/part-03.ts
+- Lessons fully covered: m7-energy, m8-momentum, m9-circular-motion × 2 locales
+- Glossary notes: beyond the mandatory glossary — fa: impulse=ضربه, vector=بردار, inertia=اینرسی, tangent=مماس, period=دوره, radius=شعاع, thermal energy=انرژی گرمایی, gravitational potential energy=انرژی پتانسیل گرانشی; tr: impulse=impuls, vector=vektör, inertia=eylemsizlik, centrifugal=merkezkaç, tangent=teğet, period=periyot, radius=yarıçap, thermal energy=ısı enerjisi, gravitational potential energy=yer çekimi potansiyel enerjisi.
+
+---
+Task ID: 10-4
+Agent: translator fa+tr (part-04)
+Task: Translate lessons m10, f1, f2 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n schema.ts, game types.ts, then extracted the exact base lessons: m10-simple-machines (lessons-mech-b.ts), f1-pressure and f2-buoyancy (lessons-fluids.ts).
+- Wrote src/data/i18n/fa/part-04.ts and src/data/i18n/tr/part-04.ts from scratch (stubs replaced): full LessonOv for all 3 lessons × 2 locales — title, tagline, 3 objectives each, every concept block in base order (m10: 10 blocks, f1: 9, f2: 10), formula captions translated (formula blocks carry caption only, no tex), tables with identical row/col counts and Latin unit symbols, worked example (title/problem/answer + text-only steps, no tex), and every practice+quiz question keyed by exact base ids (m10: p1-p2, q1-q5; f1: p1-p2, q1-q4; f2: p1-p2, q1-q5) with prompt, all choices in base order (answerIndex untouched — overlays never carry it), both hints, and explanation.
+- Math hygiene: every $…$ substring copied byte-for-byte from the base TS sources (including \\, escapes like $F = mg\\sin\\theta$, $10{,}000\\ \\mathrm{cm^2}$, $\\rho_{\\text{body}}/\\rho_{\\text{fluid}}$); verified per-field that base and overlay math segment arrays are identical in order.
+- Persian style: warm «quoted» phrasing for ages 11–15, ZWNJ in compound words (می‌کند، ماشین‌های، به‌عنوان), Western digits, Latin units (N, Pa, kPa, kg/m³, m/s²), **bold** wrapped around the corresponding translated words.
+- Turkish style: proper ş/ğ/İ/ı, TDK-style apostrophe suffixes on numerals (91.7'sini, 80'i) escaped in TS strings, glossary-exact terms (kaldırma kuvveti, eğik düzlem, yer çekimi, akışkan…).
+- Terminology decisions: lever vocabulary — fa: نیروی محرک (effort) / بار (load) / بازوی محرک / بازوی بار / تکیه‌گاه (fulcrum), tr: kuvvet / yük / kuvvet kolu / yük kolu / dayanak noktası (standard middle-school textbook terms); crowbar = levye (tr) / میله اهرمی + چرخ‌دستی (فرقون) (fa); "levers in disguise" kept playful in both; snowshoe = kar ayakkabısı / کفش برفی; ballast tanks = balast tankları / مخزن‌های بالاست; submerged fraction = batan kesir / کسر زیر آب.
+- QA (temporary bun script, deleted afterwards): imports both overlay files + base lesson arrays; checks per lesson-locale: concept length & block types, table headers/rows counts, objectives/example-steps counts, every base question id present with no extra keys, choices/hints counts match, even $ count in every string, math segments byte-identical, ** marker parity, no empty strings/TODO/placeholder, steps carry no tex. First run caught 2 missing ** bold markers in tr f1 list items → fixed → rerun clean: 6/6 lesson-locale pairs.
+- Validation: `bunx tsc --noEmit | grep i18n/(fa|tr)/part-04` → empty; no eastern digits (۰-۹/٠-٩) in either file.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-04.ts, src/data/i18n/tr/part-04.ts
+- Lessons fully covered: m10-simple-machines, f1-pressure, f2-buoyancy × 2 locales (fa, tr)
+- Glossary notes: used only the mandatory glossary plus these additions — fa: نیروی محرک/بازوی محرک/بازوی بار (lever arms), تکیه‌گاه (fulcrum), انرژی پتانسیل (PE), سنجاق ته‌گرد (drawing pin), گوه (wedge), چرخ و محور (wheel & axle), مخزن بالاست (ballast tank), کوه یخ (iceberg), کسر زیر آب (submerged fraction); tr: kuvvet kolu/yük kolu, dayanak noktası, kama, çark ve mil, balast tankı, buzdağı, batan kesir, temas alanı (contact area), çakmak (drawing pin), levye (crowbar).
+
+---
+Task ID: 10-5
+Agent: translator fa+tr (part-05)
+Task: Translate lessons f3, t1, t2 to Persian and Turkish.
+
+Work Log:
+- Read worklog.md, i18n/schema.ts, lib/game/types.ts, then extracted the exact base content for f3-pascal (lessons-fluids.ts) and t1-heat-vs-temperature, t2-heat-transfer (lessons-thermal.ts).
+- Wrote src/data/i18n/fa/part-05.ts and src/data/i18n/tr/part-05.ts as full overlay files (LessonOvFile): title, tagline, 3 objectives, concept blocks (same count/type/order as base — f3: p/formula/list/h/key/h/p/formula/list = 9 blocks; t1: 10 blocks; t2: 10 blocks incl. the 4-col × 3-row transfer-modes table), worked example (steps translated text-only: f3 ×3, t1 ×4, t2 ×3), and all questions keyed by exact base ids.
+- Question coverage: f3 (p1, p2, q1–q4), t1 (p1, p2, q1–q4), t2 (p1, p2, q1–q5) = 19 questions × 2 locales; all choices (same order/count, answerIndex untouched), 2 hints each, prompt + explanation translated; numeric questions kept choice-free.
+- All $…$ LaTeX copied byte-for-byte (e.g. $P_{\text{total}} \approx 101.3\ \mathrm{kPa} + \rho g h$, $c = 4186\ \text{J/(kg·°C)}$, $2^2 = 4\times$); western digits everywhere; unit symbols (Pa, N, kg, m², m³, J, °C) kept Latin; **bold** and *italic* markers re-wrapped around the corresponding translated words.
+- Terminology followed the mandatory glossary strictly (fa: فشار/شناوری/گرما/گرمای ویژه/رسانش/همرفت/تابش/چگالی/رسانا/نارسانا…; tr: basınç/kaldırma kuvveti/ısı/öz ısı/iletim/taşınım/ışınım/yoğunluk/iletken/yalıtkan…). Tricky decisions: "fluid" → fa شاره / tr akışkan; "pascal's principle" per glossary; "latent heat" → fa گرمای نهان / tr gizli ısı; "inverse-square law" → fa قانون عکس مجذور / tr ters kare yasası; ear "popping" → fa گوش‌هایت می‌ترکند / tr “çat” diye ses verir; avoided bidi-hostile mixed-direction strings in hints by phrasing "intensity ∝ 1/distance²" in words (fa/tr) where the base had it as plain text, while keeping ∝ + $1/d^2$ where the base itself used inline math; Turkish possessive suffixes attached to math-free text only (no ASCII apostrophes — used U+2019).
+- Validation: `bunx tsc --noEmit | grep i18n/(fa|tr)/part-05` → empty (run twice). Bun QA script (temp, deleted after run) verified: $-parity on every string; math-span multiset ⊆ base math spans (byte-identical); concept length/type/order; table header/row/cell counts; list item counts; formula caption presence matches base; example step counts + text-only steps; every base question id present with matching choices/hints counts and no empty fields; no unexpected overlay ids/keys → ALL CHECKS PASSED for both locales. Temp script removed so only the two part files + worklog were touched.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-05.ts, src/data/i18n/tr/part-05.ts
+- Lessons fully covered: f3-pascal, t1-heat-vs-temperature, t2-heat-transfer × 2 locales
+- Glossary notes: beyond the mandatory glossary — fluid=شاره/akışkan; piston=پیستون/piston; emit=گسیل کردن/yaymak; infrared radiation=تابش فروسرخ/kızılötesi ışınım; convection current=جریان همرفتی/taşınım akıntısı; heat sink=گرماگیر/ısı emici; vacuum flask=فلاسک خلأ/vakumlu termos; car jack=جک خودرو/araba kriko; brake fluid=روغن ترمز/fren hidroliği; dam=سد/baraj; specific heat capacity rendered with glossary terms گرمای ویژه/öz ısı;joule=ژول/joule; atmosphere (unit)=اتمسفر/atmosfer; sensor=حسگر/sensör; insulation=عایق‌کاری/yalıtım.
+---
+Task ID: 10-6
+Agent: translator fa+tr (part-06)
+Task: Translate lessons t3, w1, w2 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n/schema.ts, lib/game/types.ts, then extracted full English source for 't3-phase-change' (lessons-thermal.ts) and 'w1-wave-anatomy', 'w2-sound' (lessons-waves.ts); studied fa/tr part-02 overlays to match established tone and formatting (ZWNJ in fa, typographic ’ in tr, single-quoted strings).
+- Wrote src/data/i18n/fa/part-06.ts: 3 lessons fully translated (titles/taglines/objectives, 9+9+8 concept blocks with tables/lists/formula captions, worked examples as text-only steps, 6+7+7 questions incl. all MC choices and numeric questions without choices).
+- Wrote src/data/i18n/tr/part-06.ts: same coverage in Turkish with correct ş/ğ/İ/ı orthography.
+- Copied every $…$ LaTeX segment byte-for-byte; kept **bold** and *italic* markers wrapping the corresponding translated words; used «» in fa and “ ” in tr; Western digits and Latin unit symbols (m/s, Hz, J/kg, °C, km, cm) everywhere; never changed answer order (answerIndex untouched — choices only relabeled in place).
+- Built a temporary bun validator (removed after use) that imported both overlay files plus the base lessons and checked: (1) even $-count in every string field, (2) concept block count/type/table-row alignment vs base, (3) objectives count, worked-example step count and absence of tex in overlay steps, (4) full question-id coverage for practice+quiz with matching hints/choices counts, (5) multiset equality of every LaTeX segment vs the base (byte-for-byte). ALL CHECKS PASSED for both locales.
+- `bunx tsc --noEmit | grep "i18n/(fa|tr)/part-06"` → no output (clean). Remaining repo tsc errors are pre-existing in src/lib/game/i18n.tsx and translate.ts (other agents' files).
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-06.ts, src/data/i18n/tr/part-06.ts
+- Lessons fully covered: t3-phase-change, w1-wave-anatomy, w2-sound × 2 locales
+- Glossary notes: mandatory glossary applied as-is; coins — fa: تناوب=period, ذوب‌شوندگی avoided, انجماد=freezing, میعان=condensation, موج عرضی/موج طولی=transverse/longitudinal wave, تراکم/انبساط=compression/rarefaction, دیاپازن=tuning fork, فروصدا/فراصوت=infrasound/ultrasound, آذرخش/رعد=lightning/thunder, تک‌موج=pulse, فلات=plateau; tr: hâl (state) vs hal değişimi (phase change) per glossary split, donma=freezing, yoğuşma=condensation, enine/boyuna dalga=transverse/longitudinal, sıkışma/seyrekleşme=compression/rarefaction, diyapazon=tuning fork, infrases/ultrases=infrasound/ultrasound, şimşek/gök gürültüsü=lightning/thunder, atım=pulse, plato=plateau, periyot=period.
+---
+Task ID: 10-9
+Agent: translator fa+tr (part-09)
+Task: Translate lessons e3, e4, p1 to Persian and Turkish.
+
+Work Log:
+- Read worklog.md, i18n/schema.ts, lib/game/types.ts, and the runtime merge code (src/lib/game/translate.ts, l10n.ts) to confirm contract: overlays are keyed by full lesson id, questions must use the base question's EXACT full id (e.g. 'e3-series-parallel-p1'), and ovList/ovBlock silently fall back to English if any string is empty or any count mismatches.
+- Extracted e3-series-parallel, e4-magnets from lessons-em-b.ts and p1-atom from lessons-modern.ts; wrote full Persian and Turkish overlays (title, tagline, objectives, all concept blocks in identical order/types, worked example with text-only steps, all 7 practice+quiz questions per lesson).
+- Copied every $…$ LaTeX segment byte-for-byte (\\dfrac, \\Omega, \\mathrm{A}, R_{\text{total}}, I \times N, (±n) charge segments); kept **bold** markers wrapping translated words and the *italic* right-hand rule marker; Western digits and Latin unit symbols throughout; «» quotes in Persian, proper ş/ğ/İ/ı in Turkish.
+- Validation: bunx tsc --noEmit | grep "i18n/(fa|tr)/part-09" → no output; bun script (temp, deleted afterwards) imported both overlays + base lessons and checked: even $ parity on every string, $-count equality vs base field-by-field, concept block count/type/order, table header/row/column counts, question id coverage (no missing, no extra), choices/hints counts, no empty strings. Fixed 4 failures (dropped $…$ wrappers around plain numerals 8/11 in p1-p1 and p1-q5 explanations) → ALL CHECKS PASSED.
+- Tricky terminology: e3 table's first header is an empty string in the base; runtime ovList would discard the whole header row (falling back to English 'Series'/'Parallel') if any entry is length 0, so the empty cell is rendered as a single space ' ' to keep the translated «سری/موازی» and 'Seri/Paralel' headers. e4-q4 choice “North is simply ‘up’ for magnets” → «شمال برای آهن‌رباها به‌سادگی یعنی «بالا»» / “kuzey basitçe ‘yukarı’ demektir”. 'field strength (units)' for e4 kept as an abstract I×N "unit": fa «واحد», tr 'birim'.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-09.ts, src/data/i18n/tr/part-09.ts
+- Lessons fully covered: e3-series-parallel, e4-magnets, p1-atom × 2 locales (fa, tr)
+- Glossary notes: used mandatory glossary strictly (مدار سری/موازی, مقاومت, جریان الکتریکی, الکتروآهن‌ربا, قطب مغناطیسی, قطب‌نما, سیم‌پیچ, عدد جرمی, لایه, ایزوتوپ, یون; seri/paralel devre, gerilim, direnç, elektromıknatıs, mıknatıs kutbu, pusula, solenoid→sarmal for "coil" per context, kütle numarası, kabuk, izotop, iyon). Coined beyond glossary: fa branch/شاخه (parallel branch), رانش/کشش (repel/attract), قطب‌های هم‌نام/ناهمنام (like/unlike poles), قاعدهٔ دست راست (right-hand grip rule), برق شهر (mains), خط‌های میدان (field lines), برآیند بارها (net charge); tr kol (branch), itme/çekme (repel/attract), aynı cins/zıt kutup (like/unlike poles), sağ el tutma kuralı (right-hand grip rule), şebeke (mains), alan çizgileri (field lines), net yük (net charge), sarım (turn/winding).
+---
+Task ID: 10-10
+Agent: translator fa+tr (part-10)
+Task: Translate lessons p2, p3 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n schema, game types, and lessons-modern.ts; extracted p2-radioactivity (9 concept blocks: p/table/h/p/formula/p/list/key/p) and p3-modern (9 blocks: p/key/h/p/formula/p/h/p/list), each with 1 worked example (3 steps), 2 practice + 5 quiz questions (7 ids per lesson).
+- Dumped runtime strings of the base lessons with a bun script before translating, to confirm exact LaTeX escape sequences (\\gamma, \\tfrac, \\ldots, \\mathrm, backslash-space units) byte-for-byte.
+- Wrote full fa and tr overlays: title, tagline, 3 objectives, all 9 concept blocks (same order/types), worked example (title/problem/3 step texts/answer), and all 14 question ids per lesson (prompt, 4 choices for MC in base order, 2 hints, explanation). Numeric questions got no choices. answerIndex untouched.
+- Validation: bunx tsc --noEmit | grep "i18n/(fa|tr)/part-10" → empty; bun script verified per lesson: concept length/types/row-col/list-item/step counts match base, all 14 question ids present with matching choices/hints counts, every string non-empty, even $-parity everywhere, and every $…$ math segment byte-identical to a base LaTeX segment. All green.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-10.ts, src/data/i18n/tr/part-10.ts
+- Lessons fully covered: p2-radioactivity, p3-modern × 2 locales
+- Glossary notes: mandatory glossary applied (پرتوزایی/نیمه‌عمر/واپاشی، radyoaktiflik/yarı ömür/bozunum, کندی زمان/zaman genişlemesi, ساعت متحرک/hareket eden saat, طول سکون/durgun uzunluk coined from rest-energy entries). Persian: nuclear "radiation" rendered پرتو (from glossary پرتو گاما/پرتوزایی) instead of تابش, which stays thermal-only; "quanta" = کوانتا / kuanta (plural of کوانتوم/kuantum); "Scale honesty" = صداقت درباره‌ی مقیاس / Ölçek dürüstlüğü; "tracer" = ردیاب / izleyici; "interference pattern" = الگوی تداخل / girişim örüntüsü. RTL shielding chain "paper → aluminium → lead" rephrased as «کاغذ، سپس آلومینیم، سپس سرب» to avoid bidi-arrow ambiguity; numeric chains (400 → 200 → ?) kept with → since they render LTR. Decimal points kept as-is (1.25) in all locales for consistency with KaTeX math.
+---
+Task ID: 10-7
+Agent: translator fa+tr (part-07)
+Task: Translate lessons w3, o1, o2 to Persian and Turkish.
+
+Work Log:
+- Read worklog, schema.ts, types.ts; extracted base lessons w3-doppler-echo (lessons-waves.ts), o1-reflection and o2-refraction (lessons-optics-a.ts); read translate.ts to confirm overlay merge rules (lesson keyed by lesson id, questions keyed by FULL base question ids, e.g. 'w3-doppler-echo-q5' — note m1-style short ids in part-01 only work because that lesson's base ids are short).
+- Wrote src/data/i18n/fa/part-07.ts and src/data/i18n/tr/part-07.ts from scratch, replacing stubs: full overlay for w3 (9 concept blocks, 3-step example, 7 questions), o1 (9 blocks, example, 6 questions), o2 (9 blocks incl. 3×4 table, example, 7 questions) × 2 locales.
+- Kept every $…$ LaTeX segment byte-identical (incl. $f'$ strings via double-quoted TS literals), Western digits, Latin unit symbols, **bold** and *italic* markers mapped to translated words, «» quotes in Persian, “ ” in Turkish, ZWNJ half-spaces in Persian compounds.
+- Validation: `bunx tsc --noEmit` filtered on i18n/(fa|tr)/part-07 → clean. Wrote a throwaway bun checker (outside the repo) that imports both overlays + base lessons and verifies: even '$' parity in every string, concept block count/type/order match, table header/row/col counts, list item counts, example step counts, every base practice+quiz id present with no extras, choices/hints counts equal to base, no empty strings/placeholders, and every $…$ segment exists in the corresponding base string. Result: ALL CHECKS PASSED for both locales; checker deleted afterwards.
+- Tricky terminology: Persian «جبههٔ موج» / Turkish «dalga cephesi» for wavefront; pitch rendered contextually (fa «زیر/بم، زیرِ صدا», tr «tiz/pes»); fa «پژواک‌یابی» coined for echolocation (tr uses standard «ekolokasyon»); fa «بازتاب منظم (آینه‌ای)» + «بازتاب پخشی» and tr «düzenli/dağınık yansıma» for specular/diffuse; fa «بازتابندهٔ بازگشتی», tr «geri yansıtıcı» for retroreflector; fa «تنگ آزمایش» for the refraction-tank sim reference; onomatopoeia «نیی-ناااو» (fa) / “ni-naaav” (tr) for the siren; Persian uses «قانون اسنل», Turkish «Snell'in yasası»; vacuum = fa «خلأ» / tr «boşluk».
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-07.ts, src/data/i18n/tr/part-07.ts
+- Lessons fully covered: w3-doppler-echo, o1-reflection, o2-refraction × 2 locales
+- Glossary notes: terms coined beyond mandatory glossary — wavefront=جبههٔ موج/dalga cephesi; echolocation=پژواک‌یابی/ekolokasyon; specular=بازتاب منظم/düzenli yansıma; diffuse=بازتاب پخشی/dağınık yansıma; retroreflector=بازتابندهٔ بازگشتی/geri yansıtıcı; ultrasound=فراصوت/ultrason; pitch=زیر و بمی (زیر/بم)/tizlik (tiz/pes); medium=محیط/ortam; refractive index per glossary (ضریب شکست/kırılma indisi); Snell's law=قانون اسنل/Snell'in yasası; wavefront spacing kept descriptive. All other terms followed the mandatory glossary exactly.
+---
+Task ID: 10-8
+Agent: translator fa+tr (part-08)
+Task: Translate lessons o3, o4, e1, e2 to Persian and Turkish.
+
+Work Log:
+- Read worklog, i18n/schema.ts, lib/game/types.ts, and source files lessons-optics-b.ts (o3-lenses, o4-color) + lessons-em-a.ts (e1-static-fields, e2-ohms-law).
+- Wrote full Persian overlay src/data/i18n/fa/part-08.ts: 4 lessons, all 9+8+8+9 concept blocks aligned with base types/order, worked examples (text-only steps), all 25 questions (o3 p1–p2/q1–q4, o4 p1–p2/q1–q4, e1 p1–p2/q1–q4, e2 p1–p2/q1–q5) with prompts, choices (same count/order), hints (same count) and explanations.
+- Wrote full Turkish overlay src/data/i18n/tr/part-08.ts with identical coverage and structure.
+- Copied all $…$ LaTeX byte-for-byte (lens equation, m = -d_i/d_o, I=Q/t, V=IR, Ω/V/A/C unit macros, R+G=\text{yellow}, \text{white}-\text{red}=\text{cyan}, etc.); kept **bold** and *italic* markers on translated words; Western digits; Latin unit symbols; Persian «» quotes, Turkish “” quotes and proper ş/ğ/İ/ı.
+- Validation: `bunx tsc --noEmit` grep for i18n/(fa|tr)/part-08 → clean. Bun script checked: even $-count in every string field, concept block count/type/order per lesson, table header/row/col counts, list item counts, formula captions present, example step counts, every base question id covered with no extras, choices/hints counts equal to base, no empty strings → ALL PASSED. Second script verified every $…$ math segment in overlays exists verbatim in the base data → ALL MATCH.
+
+Stage Summary:
+- Files written: src/data/i18n/fa/part-08.ts, src/data/i18n/tr/part-08.ts
+- Lessons fully covered: o3-lenses, o4-color, e1-static-fields, e2-ohms-law × 2 locales (fa, tr)
+- Glossary notes: mandatory glossary applied throughout. Additional coinages — fa: attraction/repulsion = ربایش/رانش, upright (image) = راست‌به‌راست, discharge = تخلیهٔ الکتریکی ساکن, lightning = آذرخش, induction = القای الکتریکی, superposition = برهم‌نهی, test charge = بار آزمون, optical bench = نیمکت نوری, searchlight = نورافکن جست‌وجوگر, cyan/magenta = فیروزه‌ای/سرخابی, additive/subtractive = افزایشی/کاهنده; tr: attraction/repulsion = çekme/itme, upright = dik, lightning = yıldırım, induction = endüksiyon (etki ile elektriklenme), superposition = süperpozisyon, test charge = deneme yükü, coulomb = kulomb, cyan/magenta = camgöbeği/macenta, additive/subtractive = toplamsal/çıkarıcı, violet = eflatun (mor kept for purple).
+
+---
+
+Task ID: 9
+Agent: orchestrator (main)
+Task: Add a language setting with full Persian (RTL) and Turkish support across the whole game.
+
+Work Log:
+- Built i18n core `src/lib/game/i18n.tsx`: hydration-safe external locale store (useSyncExternalStore), `t(key, vars)` dictionary hook, `simT()` term glossary hook, `setLocale` persists to `localStorage('pq.locale')`, syncs `<html lang/dir>` (RTL for fa), browser-language detection on first visit (`bootstrapLocale`).
+- UI dictionaries (~200 keys each): `src/lib/game/dict/{en,fa,tr}.ts` — header/settings/footer, sidebar, home, lesson view, practice/quiz, playground, progress, licenses, unit names, ranks, special badges.
+- Physics-term glossaries (`dict/terms-fa.ts`, `terms-tr.ts`, ~330 entries each) translated all sim UI automatically by wiring sim-kit controls (SimFrame title/brief, SimSlider, SimButton incl. icon+text JSX children via deep text-node translation, SimToggle, SimSelect options, Readout, Legend) through `simT` — zero edits needed in the 30 sim files.
+- Content overlay system: `src/data/i18n/schema.ts` (typed LessonOv) + `src/lib/game/translate.ts` (validated merge: positional concept blocks, question overrides by id, per-field English fallback) + `l10n.ts` hooks (useLessons/useLesson/useUnits/useRankFor/useSpecialBadges with per-locale memoization).
+- Spawned 10 translator agents (Task 10-1..10-10): all 30 lessons fully translated to fa + tr in `src/data/i18n/{fa,tr}/part-01..10.ts` with mandatory glossaries; each agent validated math-token byte-equality, counts, and $-parity.
+- Refactored 10 chrome components to i18n + RTL logical properties; language switcher (3 buttons) added to settings; celebration/progress/licenses pages fully localized.
+- RTL & fonts: globals.css (Vazirmatn for fa, Inter hint for tr, KaTeX/font-mono/canvas LTR isolation in RTL, letter-spacing fixes), search icons to `start-*`, arrows `rtl:rotate-180`.
+- Fixed en route: locale store lint (setState-in-effect → external store), conditional hook order in lesson-view, whitespace-preserving simT for JSX-fragment buttons, missing challenge-label terms.
+
+Stage Summary:
+- `bunx tsc --noEmit` clean for src/; `bun run lint` 0 errors; overlay coverage check: ALL 30 lessons × 2 locales fully covered; dev.log 200s.
+- Browser-verified end-to-end (agent-browser): EN→FA switch mirrors layout (html dir=rtl), full Persian quiz run (5/5, mastery celebration, +70 XP, streak), TR switch (ranks/UI re-render), persistence across reload, mobile 390×844 RTL, Persian reset dialog (wipes progress, keeps locale), zero console/page errors.
+- Intentional fallbacks documented in README: canvas-art text and canvas aria-labels remain English.
