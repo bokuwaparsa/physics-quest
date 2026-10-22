@@ -22,7 +22,7 @@ const MATERIALS: { value: MatId; label: string; rho: number }[] = [
 const G = 9.8
 const SIDE = 0.3            // block side, m
 const VOL = SIDE * SIDE * SIDE // m³
-const S_MIN = -0.45         // start: block held above the water
+const S_MIN = -0.23         // start: block held just above the water, inside the tank
 const S_MAX = 0.7           // resting on the tank floor
 
 const fmt = (n: number) => Math.round(n).toLocaleString('en-US')
@@ -73,7 +73,8 @@ export function BuoyancyTankSim() {
       const m = bodyRho * VOL
       const fSub = Math.min(1, Math.max(0, (s.s + SIDE / 2) / SIDE))
       const fb = fluidRho * G * VOL * fSub
-      const a = (fb - weight) / m - 12 * s.vy
+      // y grows downward: gravity pulls +, buoyancy pushes −. Drag (−12·vy) opposes motion.
+      const a = (weight - fb) / m - 12 * s.vy
       s.vy += a * dt
       s.s += s.vy * dt
       if (s.s > S_MAX) { s.s = S_MAX; s.vy = Math.abs(s.vy) > 0.3 ? -s.vy * 0.2 : 0 }
@@ -175,7 +176,7 @@ export function BuoyancyTankSim() {
     // hints & banner
     if (s.mode === 'idle') {
       ctx.fillStyle = CANVAS.muted; ctx.font = '12px ui-sans-serif, system-ui'
-      ctx.fillText('Press Drop to release the block', cx, 100)
+      ctx.fillText('Press Drop to release the block', cx, 384)
     }
     ctx.textAlign = 'center'
     if (challenge === 'active') {
@@ -206,17 +207,17 @@ export function BuoyancyTankSim() {
       <div className="flex flex-wrap items-end gap-3">
         <SimSlider
           label="Fluid density" value={fluidRho} min={500} max={1400} step={10} unit="kg/m³"
-          onChange={setFluidRho} disabled={challenge === 'active'}
+          onChange={(v) => { setFluidRho(v); resetBlock() }} disabled={challenge === 'active'}
         />
         <SimSelect
           label="Block material" value={mat}
           options={MATERIALS.map((m) => ({ value: m.value, label: m.label }))}
-          onChange={(v) => setMat(v)}
+          onChange={(v) => { setMat(v); resetBlock() }}
         />
         {mat === 'custom' && (
           <SimSlider
             label="Custom block density" value={customRho} min={100} max={1500} step={5} unit="kg/m³"
-            onChange={setCustomRho}
+            onChange={(v) => { setCustomRho(v); resetBlock() }}
           />
         )}
         <div className="flex flex-wrap gap-2">
