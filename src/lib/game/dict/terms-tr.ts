@@ -1,3 +1,8 @@
+import { termsTrK } from './terms-tr-k'
+import { termsTrL } from './terms-tr-l'
+import { termsTrM } from './terms-tr-m'
+import { termsTrN } from './terms-tr-n'
+import { termsTrO } from './terms-tr-o'
 import { termsTrG1 } from './terms-tr-g1'
 import { termsTrI } from './terms-tr-i'
 import { termsTrJ } from './terms-tr-j'
@@ -380,3 +385,9 @@ Object.assign(termsTr, {
 Object.assign(termsTr, termsTrG1)
 Object.assign(termsTr, termsTrI)
 Object.assign(termsTr, termsTrJ)
+
+Object.assign(termsTr, termsTrK)
+Object.assign(termsTr, termsTrL)
+Object.assign(termsTr, termsTrM)
+Object.assign(termsTr, termsTrN)
+Object.assign(termsTr, termsTrO)

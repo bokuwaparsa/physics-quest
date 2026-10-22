@@ -1,3 +1,8 @@
+import { termsFaK } from './terms-fa-k'
+import { termsFaL } from './terms-fa-l'
+import { termsFaM } from './terms-fa-m'
+import { termsFaN } from './terms-fa-n'
+import { termsFaO } from './terms-fa-o'
 import { termsFaG1 } from './terms-fa-g1'
 import { termsFaI } from './terms-fa-i'
 import { termsFaJ } from './terms-fa-j'
@@ -380,3 +385,9 @@ Object.assign(termsFa, {
 Object.assign(termsFa, termsFaG1)
 Object.assign(termsFa, termsFaI)
 Object.assign(termsFa, termsFaJ)
+
+Object.assign(termsFa, termsFaK)
+Object.assign(termsFa, termsFaL)
+Object.assign(termsFa, termsFaM)
+Object.assign(termsFa, termsFaN)
+Object.assign(termsFa, termsFaO)
