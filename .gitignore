@@ -52,3 +52,12 @@ prompt
 server.log
 # Skills directory
 /skills/
+# sandbox artifacts & local junk (not part of the project)
+.env
+db/*.db
+db/*.db-journal
+tool-results/
+upload/
+worklog.md
+docs/AGENT-SPEC.md
+.zscripts/dev.pid
