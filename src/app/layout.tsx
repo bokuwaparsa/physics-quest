@@ -60,13 +60,17 @@ export default async function RootLayout({
 }>) {
   // Server-side direction: if the visitor already picked a language (cookie),
   // render <html lang dir> correctly in the SSR output itself — RTL no longer
-  // depends on any client script running.
+  // depends on any client script running. Skipped during STATIC_EXPORT builds
+  // (GitHub Pages): there the pre-paint bootstrap script below sets lang/dir
+  // from localStorage → cookie → browser language before the first paint.
   let initial = "en";
-  try {
-    const cookieLocale = (await cookies()).get("pq.locale")?.value;
-    if (cookieLocale && LOCALES.has(cookieLocale)) initial = cookieLocale;
-  } catch {
-    /* cookies unavailable (e.g. static export) */
+  if (process.env.STATIC_EXPORT !== "1") {
+    try {
+      const cookieLocale = (await cookies()).get("pq.locale")?.value;
+      if (cookieLocale && LOCALES.has(cookieLocale)) initial = cookieLocale;
+    } catch {
+      /* cookies unavailable (e.g. static export) */
+    }
   }
   const dir = initial === "fa" ? "rtl" : "ltr";
 
