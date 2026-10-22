@@ -14,12 +14,17 @@ import { lessonsEmA } from '@/data/lessons-em-a'
 import { lessonsEmB } from '@/data/lessons-em-b'
 import { lessonsModern } from '@/data/lessons-modern'
 import { lessonsMech } from '@/data/lessons-mech'
+import { lessonsMechC } from '@/data/lessons-mech-c'
+import { lessonsMechD } from '@/data/lessons-mech-d'
+import { lessonsThermalB } from '@/data/lessons-thermal-b'
+import { lessonsWavesB } from '@/data/lessons-waves-b'
+import { lessonsWavesC } from '@/data/lessons-waves-c'
 
 export const UNITS: Unit[] = [
   {
     id: 'mechanics', title: 'Mechanics', tagline: 'Motion, forces, energy & machines',
     accent: 'text-orange-600 dark:text-orange-400', hex: '#ea580c',
-    lessonIds: [...lessonsMech, ...lessonsMechA, ...lessonsMechB]
+    lessonIds: [...lessonsMech, ...lessonsMechA, ...lessonsMechB, ...lessonsMechC, ...lessonsMechD]
       .sort((a, b) => a.order - b.order).map((l) => l.id),
   },
   {
@@ -30,12 +35,12 @@ export const UNITS: Unit[] = [
   {
     id: 'thermal', title: 'Heat & Thermal Physics', tagline: 'Hot, cold & everything in between',
     accent: 'text-rose-600 dark:text-rose-400', hex: '#e11d48',
-    lessonIds: lessonsThermal.sort((a, b) => a.order - b.order).map((l) => l.id),
+    lessonIds: lessonsThermal.concat(lessonsThermalB).sort((a, b) => a.order - b.order).map((l) => l.id),
   },
   {
     id: 'waves', title: 'Waves & Sound', tagline: 'Ripples, rumbles & echoes',
     accent: 'text-violet-600 dark:text-violet-400', hex: '#7c3aed',
-    lessonIds: lessonsWaves.sort((a, b) => a.order - b.order).map((l) => l.id),
+    lessonIds: lessonsWaves.concat(lessonsWavesB, lessonsWavesC).sort((a, b) => a.order - b.order).map((l) => l.id),
   },
   {
     id: 'optics', title: 'Light & Optics', tagline: 'Rays, rainbows & lenses',
@@ -55,8 +60,9 @@ export const UNITS: Unit[] = [
 ]
 
 const ALL_LESSONS: Lesson[] = [
-  ...lessonsMech, ...lessonsMechA, ...lessonsMechB,
-  ...lessonsFluids, ...lessonsThermal, ...lessonsWaves,
+  ...lessonsMech, ...lessonsMechA, ...lessonsMechB, ...lessonsMechC, ...lessonsMechD,
+  ...lessonsFluids, ...lessonsThermal, ...lessonsThermalB, ...lessonsWaves,
+  ...lessonsWavesB, ...lessonsWavesC,
   ...lessonsOpticsA, ...lessonsOpticsB, ...lessonsEmA, ...lessonsEmB,
   ...lessonsModern,
 ]
