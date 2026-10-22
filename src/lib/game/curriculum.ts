@@ -19,6 +19,11 @@ import { lessonsMechD } from '@/data/lessons-mech-d'
 import { lessonsThermalB } from '@/data/lessons-thermal-b'
 import { lessonsWavesB } from '@/data/lessons-waves-b'
 import { lessonsWavesC } from '@/data/lessons-waves-c'
+import { lessonsEmC } from '@/data/lessons-em-c'
+import { lessonsEmD } from '@/data/lessons-em-d'
+import { lessonsOpticsC } from '@/data/lessons-optics-c'
+import { lessonsModernB } from '@/data/lessons-modern-b'
+import { lessonsModernC } from '@/data/lessons-modern-c'
 
 export const UNITS: Unit[] = [
   {
@@ -45,17 +50,17 @@ export const UNITS: Unit[] = [
   {
     id: 'optics', title: 'Light & Optics', tagline: 'Rays, rainbows & lenses',
     accent: 'text-amber-600 dark:text-amber-400', hex: '#d97706',
-    lessonIds: lessonsOpticsA.concat(lessonsOpticsB).sort((a, b) => a.order - b.order).map((l) => l.id),
+    lessonIds: lessonsOpticsA.concat(lessonsOpticsB, lessonsOpticsC).sort((a, b) => a.order - b.order).map((l) => l.id),
   },
   {
     id: 'em', title: 'Electricity & Magnetism', tagline: 'Charges, currents & fields',
     accent: 'text-yellow-600 dark:text-yellow-400', hex: '#ca8a04',
-    lessonIds: lessonsEmA.concat(lessonsEmB).sort((a, b) => a.order - b.order).map((l) => l.id),
+    lessonIds: lessonsEmA.concat(lessonsEmB, lessonsEmC, lessonsEmD).sort((a, b) => a.order - b.order).map((l) => l.id),
   },
   {
     id: 'modern', title: 'Modern Physics', tagline: 'Atoms, nuclei & the quantum world',
     accent: 'text-emerald-600 dark:text-emerald-400', hex: '#059669',
-    lessonIds: lessonsModern.sort((a, b) => a.order - b.order).map((l) => l.id),
+    lessonIds: lessonsModern.concat(lessonsModernB, lessonsModernC).sort((a, b) => a.order - b.order).map((l) => l.id),
   },
 ]
 
@@ -63,8 +68,9 @@ const ALL_LESSONS: Lesson[] = [
   ...lessonsMech, ...lessonsMechA, ...lessonsMechB, ...lessonsMechC, ...lessonsMechD,
   ...lessonsFluids, ...lessonsThermal, ...lessonsThermalB, ...lessonsWaves,
   ...lessonsWavesB, ...lessonsWavesC,
-  ...lessonsOpticsA, ...lessonsOpticsB, ...lessonsEmA, ...lessonsEmB,
-  ...lessonsModern,
+  ...lessonsOpticsA, ...lessonsOpticsB, ...lessonsOpticsC, ...lessonsEmA, ...lessonsEmB,
+  ...lessonsEmC, ...lessonsEmD,
+  ...lessonsModern, ...lessonsModernB, ...lessonsModernC,
 ]
 
 const LESSON_MAP = new Map<string, Lesson>(ALL_LESSONS.map((l) => [l.id, l]))

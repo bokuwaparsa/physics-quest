@@ -12,6 +12,11 @@ import { simsF } from './slice-f'
 import { simsG } from './g/slice-g'
 import { simsH } from './h/slice-h'
 import { simsI } from './i/slice-i'
+import { simsK } from './k/slice-k'
+import { simsL } from './l/slice-l'
+import { simsM } from './m/slice-m'
+import { simsN } from './n/slice-n'
+import { simsO } from './o/slice-o'
 
 export const SIMS: Record<string, SimComponent> = {
   ...simsMechCore,
@@ -24,6 +29,11 @@ export const SIMS: Record<string, SimComponent> = {
   ...simsG,
   ...simsH,
   ...simsI,
+  ...simsK,
+  ...simsL,
+  ...simsM,
+  ...simsN,
+  ...simsO,
 }
 
 function SimMissing({ lessonId }: { lessonId: string }) {
