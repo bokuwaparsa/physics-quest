@@ -1,3 +1,6 @@
+import { termsFaG1 } from './terms-fa-g1'
+import { termsFaI } from './terms-fa-i'
+import { termsFaJ } from './terms-fa-j'
 // ─── Physics Quest · Persian physics/sim term glossary (English → فارسی) ──────
 // Used automatically by sim-kit controls; missing keys fall back to English.
 export const termsFa: Record<string, string> = {
@@ -373,3 +376,7 @@ Object.assign(termsFa, {
   'real · inverted': 'حقیقی · وارونه',
   'virtual · upright': 'مجازی · راست‌به‌راست',
 })
+
+Object.assign(termsFa, termsFaG1)
+Object.assign(termsFa, termsFaI)
+Object.assign(termsFa, termsFaJ)

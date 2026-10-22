@@ -1,3 +1,6 @@
+import { termsTrG1 } from './terms-tr-g1'
+import { termsTrI } from './terms-tr-i'
+import { termsTrJ } from './terms-tr-j'
 // ─── Physics Quest · Turkish physics/sim term glossary (English → Türkçe) ─────
 // Used automatically by sim-kit controls; missing keys fall back to English.
 export const termsTr: Record<string, string> = {
@@ -373,3 +376,7 @@ Object.assign(termsTr, {
   'real · inverted': 'gerçek · terstür',
   'virtual · upright': 'sanal · dik',
 })
+
+Object.assign(termsTr, termsTrG1)
+Object.assign(termsTr, termsTrI)
+Object.assign(termsTr, termsTrJ)
